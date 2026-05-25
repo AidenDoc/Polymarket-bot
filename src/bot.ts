@@ -76,11 +76,13 @@ async function runPipeline(): Promise<void> {
   console.log("═".repeat(55));
 
   const steps = [
-    { name: "Step 1: Scanner",   script: "scanner.ts" },
-    { name: "Step 2: Research",  script: "researcher.ts" },
-    { name: "Step 3: Predictor", script: "predictor.ts" },
-    { name: "Step 4: Executor",  script: "executor.ts" },
-  ];
+  { name: "Step 1: Scanner",   script: "scanner.ts" },
+  { name: "Step 2: Research",  script: "researcher.ts" },
+  { name: "Step 2.5: Sentiment", script: "sentiment.ts" },
+  { name: "Step 3: Predictor", script: "predictor.ts" },
+  { name: "Step 4: Executor",  script: "executor.ts" },
+  { name: "Step 5: Closer",    script: "closer.ts" },
+];
 
   for (const step of steps) {
     runStep(step.name, step.script);

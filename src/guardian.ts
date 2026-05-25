@@ -15,7 +15,6 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-// ─── CONFIG ────────────────────────────────────────────────
 const CHECK_INTERVAL_MS = 5 * 60 * 1000;
 const DASHBOARD_URL = "http://localhost:3000";
 const GUARDIAN_LOG = "guardian_log.json";
@@ -30,7 +29,6 @@ const WATCHED_PROCESSES = ["kalshi-bot", "kalshi-dashboard"];
 let lastKnownTradeCount = 0;
 let lastDailySummaryDate = "";
 
-// ─── TYPES ─────────────────────────────────────────────────
 interface ProcessStatus {
   name: string;
   status: string;
@@ -65,7 +63,6 @@ interface Trade {
   timestamp?: string;
 }
 
-// ─── HELPERS ───────────────────────────────────────────────
 function log(msg: string) {
   const ts = new Date().toISOString();
   console.log(`[${ts}] [GUARDIAN] ${msg}`);
@@ -104,7 +101,6 @@ function appendGuardianLog(entry: GuardianLogEntry) {
   fs.writeFileSync(GUARDIAN_LOG, JSON.stringify(entries, null, 2));
 }
 
-// ─── TELEGRAM ──────────────────────────────────────────────
 function sendTelegram(message: string): Promise<void> {
   return new Promise((resolve) => {
     if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
@@ -129,7 +125,6 @@ function sendTelegram(message: string): Promise<void> {
   });
 }
 
-// ─── PM2 STATUS ────────────────────────────────────────────
 function getPm2Status(): ProcessStatus[] {
   try {
     const result = spawnSync("pm2", ["jlist"], { encoding: "utf-8" });
@@ -148,7 +143,6 @@ function getPm2Status(): ProcessStatus[] {
   } catch { return []; }
 }
 
-// ─── DASHBOARD PING ────────────────────────────────────────
 function pingDashboard(): Promise<boolean> {
   return new Promise((resolve) => {
     try {
@@ -161,7 +155,6 @@ function pingDashboard(): Promise<boolean> {
   });
 }
 
-// ─── TRADE MONITORING ──────────────────────────────────────
 async function checkForNewTrades() {
   const tradeLog = loadJson("trade_log.json");
   if (!tradeLog || !Array.isArray(tradeLog)) return;
@@ -186,7 +179,6 @@ async function checkForNewTrades() {
   lastKnownTradeCount = currentCount;
 }
 
-// ─── DAILY SUMMARY ─────────────────────────────────────────
 async function checkDailySummary() {
   const today = new Date().toDateString();
   const hour = new Date().getHours();
@@ -212,7 +204,6 @@ async function checkDailySummary() {
   }
 }
 
-// ─── ISSUE DETECTION ───────────────────────────────────────
 function detectIssues(processes: ProcessStatus[], dashboardReachable: boolean, errorLog: string): string[] {
   const issues: string[] = [];
   for (const proc of processes) {
@@ -234,7 +225,6 @@ function detectIssues(processes: ProcessStatus[], dashboardReachable: boolean, e
   return issues;
 }
 
-// ─── CLAUDE API DIAGNOSIS ──────────────────────────────────
 async function getDiagnosis(report: HealthReport): Promise<string> {
   const prompt = `You are an expert DevOps agent monitoring a Kalshi prediction market trading bot running on a Ubuntu VPS with PM2.
 
@@ -288,7 +278,6 @@ AUTO-FIXABLE: <YES or NO>`;
   });
 }
 
-// ─── AUTO-FIX ──────────────────────────────────────────────
 async function attemptAutoFix(issues: string[]): Promise<string> {
   const actions: string[] = [];
   for (const issue of issues) {
@@ -300,6 +289,15 @@ async function attemptAutoFix(issues: string[]): Promise<string> {
           actions.push(`Restarted ${match[1]}`);
         } catch { actions.push(`Failed to restart ${match[1]}`); }
       }
+    }
+    if (issue.includes("possible crash loop") && issue.includes("kalshi-dashboard")) {
+      try {
+        try { execSync("fuser -k 3000/tcp", { timeout: 5000 }); } catch {}
+        await sleep(2000);
+        execSync("pm2 restart kalshi-dashboard", { timeout: 15000 });
+        execSync("pm2 reset kalshi-dashboard", { timeout: 5000 });
+        actions.push("Cleared port 3000 and reset crash loop for kalshi-dashboard");
+      } catch { actions.push("Failed to fix kalshi-dashboard crash loop"); }
     }
     if (issue.includes("Missing processes")) {
       if (issue.includes("kalshi-bot")) {
@@ -329,7 +327,6 @@ async function attemptAutoFix(issues: string[]): Promise<string> {
   return actions.length > 0 ? actions.join("; ") : "No auto-fix applied";
 }
 
-// ─── MAIN HEALTH CHECK ─────────────────────────────────────
 async function runHealthCheck() {
   log("Running health check...");
   const processes = getPm2Status();
@@ -365,7 +362,6 @@ async function runHealthCheck() {
   appendGuardianLog({ timestamp: report.timestamp, healthReport: report, diagnosis, actionTaken, fixed: actionTaken !== "No auto-fix applied" });
 }
 
-// ─── STARTUP ───────────────────────────────────────────────
 async function main() {
   log("=".repeat(55));
   log("  KALSHI BOT — GUARDIAN AGENT STARTED");

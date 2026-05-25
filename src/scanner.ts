@@ -21,13 +21,13 @@ const BASE_URL = ENV === "demo"
   ? "https://demo-api.kalshi.co/trade-api/v2"
   : "https://api.elections.kalshi.com/trade-api/v2";
 
-const MIN_VOLUME = 500;           // raised: junk markets have tiny volume
+const MIN_VOLUME = 100;           // raised: junk markets have tiny volume
 const MAX_DAYS_TO_EXPIRY = 7;
-const MIN_OPEN_INTEREST = 200;    // raised: need real liquidity
+const MIN_OPEN_INTEREST = 50;    // raised: need real liquidity
 const MAX_MARKETS_TO_RESEARCH = 10;
 const PRICE_SPIKE_THRESHOLD = 0.1;
 const SPREAD_THRESHOLD = 0.05;
-const MIN_PRICE = 0.05;           // NEW: block sub-5¢ lottery tickets
+const MIN_PRICE = 0.04;           // NEW: block sub-5¢ lottery tickets
 const MAX_PRICE = 0.95;           // NEW: block near-certain markets (no edge)
 
 // Hard-blocked series — never trade these regardless of score
@@ -232,7 +232,7 @@ async function runScan(client: KalshiClient): Promise<ScanResult[]> {
     cursor = resp.cursor;
     console.log(`  Page ${page}: +${resp.markets.length} markets (total: ${allMarkets.length})`);
     await new Promise((r) => setTimeout(r, 500));
-  } while (cursor && allMarkets.length < 1000);
+  } while (cursor && allMarkets.length < 5000);
 
   // 2. Filter tradeable (with hard blocks applied inside isTradeable)
   const blocked = allMarkets.filter(m => isBlocked(m.ticker));

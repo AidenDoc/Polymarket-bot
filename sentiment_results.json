@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-25T15:36:57.380Z",
+  "timestamp": "2026-05-25T19:23:44.865Z",
   "marketsAnalyzed": 10,
   "results": [
     {
@@ -11,7 +11,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:48.738Z"
+      "timestamp": "2026-05-25T19:23:36.148Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026D5C28B5CF8D-B819433C8E5",
@@ -22,7 +22,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:49.675Z"
+      "timestamp": "2026-05-25T19:23:37.172Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20263E5961C4C89-A415DE9DAD7",
@@ -33,7 +33,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:50.601Z"
+      "timestamp": "2026-05-25T19:23:38.176Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20269739F049E5F-E9D5B2985B5",
@@ -44,7 +44,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:51.777Z"
+      "timestamp": "2026-05-25T19:23:39.257Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026ADF5FDB89F0-D15BA00B78A",
@@ -55,7 +55,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:52.632Z"
+      "timestamp": "2026-05-25T19:23:40.017Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026B3D10611132-8FC8B412F14",
@@ -66,7 +66,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:53.385Z"
+      "timestamp": "2026-05-25T19:23:40.882Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20264E6BE0CB7CC-4EDADA0505F",
@@ -77,7 +77,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:54.287Z"
+      "timestamp": "2026-05-25T19:23:41.734Z"
     },
     {
       "ticker": "KXMVECROSSCATEGORY-S2026AA00C810D96-EF076320861",
@@ -88,7 +88,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:55.200Z"
+      "timestamp": "2026-05-25T19:23:42.612Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026E438CEE3BBF-941706CE736",
@@ -99,7 +99,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:56.024Z"
+      "timestamp": "2026-05-25T19:23:43.481Z"
     },
     {
       "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026D6484BDC85D-7A6F78F3C11",
@@ -110,7 +110,7 @@
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T15:36:56.878Z"
+      "timestamp": "2026-05-25T19:23:44.363Z"
     }
   ]
 }

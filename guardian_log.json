@@ -3759,5 +3759,1406 @@
     "diagnosis": "No diagnosis available",
     "actionTaken": "No auto-fix applied",
     "fixed": false
+  },
+  {
+    "timestamp": "2026-05-25T15:39:13.443Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T15:39:13.443Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "3m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "34mb",
+          "uptime": "175m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": [
+        "Process \"kalshi-bot\" has restarted 10 times — possible crash loop"
+      ]
+    },
+    "diagnosis": "No diagnosis available",
+    "actionTaken": "No auto-fix applied",
+    "fixed": false
+  },
+  {
+    "timestamp": "2026-05-25T15:44:13.567Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T15:44:13.567Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "8m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "34mb",
+          "uptime": "180m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": [
+        "Process \"kalshi-bot\" has restarted 10 times — possible crash loop"
+      ]
+    },
+    "diagnosis": "No diagnosis available",
+    "actionTaken": "No auto-fix applied",
+    "fixed": false
+  },
+  {
+    "timestamp": "2026-05-25T15:49:13.570Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T15:49:13.570Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "13m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "34mb",
+          "uptime": "185m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": [
+        "Process \"kalshi-bot\" has restarted 10 times — possible crash loop"
+      ]
+    },
+    "diagnosis": "No diagnosis available",
+    "actionTaken": "No auto-fix applied",
+    "fixed": false
+  },
+  {
+    "timestamp": "2026-05-25T15:50:57.729Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T15:50:57.729Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "15m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "35mb",
+          "uptime": "187m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T15:55:58.147Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T15:55:58.147Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "55mb",
+          "uptime": "20m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "33mb",
+          "uptime": "192m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:00:58.236Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:00:58.236Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "25m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "34mb",
+          "uptime": "197m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:05:58.275Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:05:58.275Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "30m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "34mb",
+          "uptime": "202m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:10:58.495Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:10:58.495Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "54mb",
+          "uptime": "35m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "26mb",
+          "uptime": "207m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:15:58.505Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:15:58.505Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "40m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "26mb",
+          "uptime": "212m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:20:58.536Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:20:58.536Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "54mb",
+          "uptime": "45m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "27mb",
+          "uptime": "217m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:25:58.434Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:25:58.434Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "54mb",
+          "uptime": "50m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "27mb",
+          "uptime": "222m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:30:58.702Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:30:58.702Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "55mb",
+          "uptime": "55m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "27mb",
+          "uptime": "227m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:35:58.648Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:35:58.648Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.5%",
+          "memory": "55mb",
+          "uptime": "60m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "26mb",
+          "uptime": "232m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:40:58.775Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:40:58.775Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.4%",
+          "memory": "55mb",
+          "uptime": "65m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "20mb",
+          "uptime": "237m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:45:58.823Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:45:58.823Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "55mb",
+          "uptime": "70m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "21mb",
+          "uptime": "242m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:50:58.880Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:50:58.880Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "55mb",
+          "uptime": "75m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.1%",
+          "memory": "21mb",
+          "uptime": "247m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T16:55:59.031Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T16:55:59.031Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "55mb",
+          "uptime": "80m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "252m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:00:59.122Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:00:59.122Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "55mb",
+          "uptime": "85m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "257m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:05:59.187Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:05:59.187Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "55mb",
+          "uptime": "90m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "262m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:10:59.203Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:10:59.203Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "56mb",
+          "uptime": "95m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "19mb",
+          "uptime": "267m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:15:59.274Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:15:59.274Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "56mb",
+          "uptime": "100m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "19mb",
+          "uptime": "272m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:20:59.484Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:20:59.484Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "56mb",
+          "uptime": "105m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.1%",
+          "memory": "20mb",
+          "uptime": "277m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:25:59.496Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:25:59.496Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "56mb",
+          "uptime": "110m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "282m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:30:59.573Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:30:59.573Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "55mb",
+          "uptime": "115m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "287m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:35:59.638Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:35:59.638Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "56mb",
+          "uptime": "120m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.1%",
+          "memory": "20mb",
+          "uptime": "292m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:40:59.756Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:40:59.756Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "56mb",
+          "uptime": "125m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "297m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:45:59.854Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:45:59.854Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "56mb",
+          "uptime": "130m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "302m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:50:59.870Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:50:59.870Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "56mb",
+          "uptime": "135m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "20mb",
+          "uptime": "307m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T17:55:59.862Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T17:55:59.862Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "56mb",
+          "uptime": "140m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "312m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:01:00.090Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:01:00.090Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "56mb",
+          "uptime": "145m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "317m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:06:00.133Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:06:00.133Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "56mb",
+          "uptime": "150m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "20mb",
+          "uptime": "322m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:11:00.223Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:11:00.223Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "56mb",
+          "uptime": "155m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "20mb",
+          "uptime": "327m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:16:00.321Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:16:00.321Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.4%",
+          "memory": "57mb",
+          "uptime": "160m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "21mb",
+          "uptime": "332m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:21:00.587Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:21:00.587Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.4%",
+          "memory": "56mb",
+          "uptime": "165m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "20mb",
+          "uptime": "337m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:26:00.576Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:26:00.576Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "57mb",
+          "uptime": "170m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.1%",
+          "memory": "21mb",
+          "uptime": "342m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:31:00.514Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:31:00.514Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "57mb",
+          "uptime": "175m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "20mb",
+          "uptime": "347m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:36:00.749Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:36:00.749Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.4%",
+          "memory": "56mb",
+          "uptime": "180m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "21mb",
+          "uptime": "352m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:41:00.725Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:41:00.725Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.4%",
+          "memory": "57mb",
+          "uptime": "185m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "21mb",
+          "uptime": "357m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:46:00.801Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:46:00.801Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "57mb",
+          "uptime": "190m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "21mb",
+          "uptime": "362m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:51:00.958Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:51:00.958Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "57mb",
+          "uptime": "195m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "21mb",
+          "uptime": "367m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T18:56:00.767Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T18:56:00.767Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "57mb",
+          "uptime": "200m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "21mb",
+          "uptime": "372m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T19:01:00.823Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T19:01:00.823Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.1%",
+          "memory": "57mb",
+          "uptime": "205m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "21mb",
+          "uptime": "377m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T19:06:00.811Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T19:06:00.811Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.4%",
+          "memory": "57mb",
+          "uptime": "210m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "21mb",
+          "uptime": "382m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T19:11:00.901Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T19:11:00.901Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "57mb",
+          "uptime": "215m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "21mb",
+          "uptime": "387m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T19:16:00.981Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T19:16:00.981Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.2%",
+          "memory": "57mb",
+          "uptime": "220m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "21mb",
+          "uptime": "392m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T19:21:01.152Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T19:21:01.152Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "57mb",
+          "uptime": "225m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "21mb",
+          "uptime": "397m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T19:26:01.228Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T19:26:01.228Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "54mb",
+          "uptime": "230m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "19mb",
+          "uptime": "402m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
+  },
+  {
+    "timestamp": "2026-05-25T19:31:01.252Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T19:31:01.252Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 10,
+          "cpu": "0.3%",
+          "memory": "54mb",
+          "uptime": "235m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.2%",
+          "memory": "18mb",
+          "uptime": "407m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": []
+    },
+    "actionTaken": "None",
+    "fixed": true
   }
 ]

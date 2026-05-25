@@ -21,16 +21,29 @@ const BASE_URL = ENV === "demo"
   ? "https://demo-api.kalshi.co/trade-api/v2"
   : "https://api.elections.kalshi.com/trade-api/v2";
 
-const MIN_VOLUME = 50;
+const MIN_VOLUME = 500;           // raised: junk markets have tiny volume
 const MAX_DAYS_TO_EXPIRY = 7;
-const MIN_OPEN_INTEREST = 50;
+const MIN_OPEN_INTEREST = 200;    // raised: need real liquidity
 const MAX_MARKETS_TO_RESEARCH = 10;
 const PRICE_SPIKE_THRESHOLD = 0.1;
 const SPREAD_THRESHOLD = 0.05;
+const MIN_PRICE = 0.05;           // NEW: block sub-5¢ lottery tickets
+const MAX_PRICE = 0.95;           // NEW: block near-certain markets (no edge)
 
-// Market priority categories
-const PREFERRED_SERIES = ["PRES", "FED", "CPI", "GDP", "JOBS", "SENATE", "HOUSE", "GOV", "ECON", "CRYPTO", "INX", "NASDAQ"];
-const DEPRIORITIZED_SERIES = ["KXMVE", "KXMVESPORTS", "KXMVECROSS"];
+// Hard-blocked series — never trade these regardless of score
+const BLOCKED_SERIES = [
+  "MULTIGAME",      // sports parlays (5+ team combos)
+  "CROSSCATEGORY",  // mixed junk parlays
+  "KXMVESPORTS",    // sports multi-game extended
+  "KXMVECROSS",     // cross-category junk
+];
+
+// Preferred series — economics, politics, macro
+const PREFERRED_SERIES = [
+  "PRES", "FED", "CPI", "GDP", "JOBS", "SENATE", "HOUSE",
+  "GOV", "ECON", "CRYPTO", "INX", "NASDAQ", "INXD",
+  "UNEMP", "PCE", "PPI", "RETAIL", "HOUSING",
+];
 
 // ─── TYPES ─────────────────────────────────────────────────
 interface KalshiMarket {
@@ -141,15 +154,28 @@ function daysUntilExpiry(closeTime?: string): number | null {
   return (close - now) / (1000 * 60 * 60 * 24);
 }
 
+function isBlocked(ticker: string): boolean {
+  const upper = ticker.toUpperCase();
+  return BLOCKED_SERIES.some(b => upper.includes(b.toUpperCase()));
+}
+
 function isTradeable(m: KalshiMarket): { ok: boolean; reason: string } {
+  // Hard block junk series first
+  if (isBlocked(m.ticker)) return { ok: false, reason: "blocked series (parlay/junk)" };
+
   const volume = parseFloat(m.volume_fp ?? "0");
   const oi = parseFloat(m.open_interest_fp ?? "0");
+  const price = parseFloat(m.last_price_dollars ?? "0");
   const days = daysUntilExpiry(m.close_time ?? m.expiration_time);
-  if (volume < MIN_VOLUME) return { ok: false, reason: `low volume (${volume})` };
-  if (oi < MIN_OPEN_INTEREST) return { ok: false, reason: `low OI (${oi})` };
-  if (days === null) return { ok: false, reason: "missing expiry" };
-  if (days < 0) return { ok: false, reason: "expired" };
-  if (days > MAX_DAYS_TO_EXPIRY) return { ok: false, reason: `too far out (${days.toFixed(1)}d)` };
+
+  if (volume < MIN_VOLUME)        return { ok: false, reason: `low volume (${volume})` };
+  if (oi < MIN_OPEN_INTEREST)     return { ok: false, reason: `low OI (${oi})` };
+  if (days === null)               return { ok: false, reason: "missing expiry" };
+  if (days < 0)                   return { ok: false, reason: "expired" };
+  if (days > MAX_DAYS_TO_EXPIRY)  return { ok: false, reason: `too far out (${days.toFixed(1)}d)` };
+  if (price < MIN_PRICE)          return { ok: false, reason: `price too low ($${price.toFixed(3)}) — lottery ticket` };
+  if (price > MAX_PRICE)          return { ok: false, reason: `price too high ($${price.toFixed(3)}) — no edge` };
+
   return { ok: true, reason: "" };
 }
 
@@ -185,7 +211,9 @@ function scoreMarket(m: KalshiMarket, days: number, flags: string[]): number {
   const oiScore = Math.min(oi / 5_000, 1.0);
   const timeScore = Math.max(0, 1.0 - days / MAX_DAYS_TO_EXPIRY);
   const anomalyBonus = flags.length * 0.1;
-  return parseFloat((volScore * 0.35 + oiScore * 0.25 + timeScore * 0.30 + anomalyBonus).toFixed(4));
+  // Bonus for preferred series
+  const preferredBonus = PREFERRED_SERIES.some(s => m.ticker.toUpperCase().includes(s)) ? 0.2 : 0;
+  return parseFloat((volScore * 0.35 + oiScore * 0.25 + timeScore * 0.25 + anomalyBonus + preferredBonus).toFixed(4));
 }
 
 // ─── MAIN SCAN ─────────────────────────────────────────────
@@ -208,9 +236,10 @@ async function runScan(client: KalshiClient): Promise<ScanResult[]> {
     await new Promise((r) => setTimeout(r, 500));
   } while (cursor && allMarkets.length < 1000);
 
-  // 2. Filter tradeable
+  // 2. Filter tradeable (with hard blocks applied inside isTradeable)
+  const blocked = allMarkets.filter(m => isBlocked(m.ticker));
   const tradeable = allMarkets.filter((m) => isTradeable(m).ok);
-  console.log(`\n  Tradeable: ${tradeable.length} / ${allMarkets.length} markets pass filters`);
+  console.log(`\n  Total: ${allMarkets.length} | Blocked (junk): ${blocked.length} | Tradeable: ${tradeable.length}`);
 
   // 3. Enrich with orderbook + score
   const results: ScanResult[] = [];
@@ -236,31 +265,25 @@ async function runScan(client: KalshiClient): Promise<ScanResult[]> {
     }
   }
 
-  // 4. Sort by category priority
-  const preferred = results.filter(r => PREFERRED_SERIES.some(s => r.ticker.includes(s)));
-  const neutral = results.filter(r =>
-    !PREFERRED_SERIES.some(s => r.ticker.includes(s)) &&
-    !DEPRIORITIZED_SERIES.some(s => r.ticker.includes(s))
-  );
-  const deprioritized = results.filter(r => DEPRIORITIZED_SERIES.some(s => r.ticker.includes(s)));
+  // 4. Sort: preferred first, then by score
+  const preferred = results.filter(r => PREFERRED_SERIES.some(s => r.ticker.toUpperCase().includes(s)));
+  const neutral   = results.filter(r => !PREFERRED_SERIES.some(s => r.ticker.toUpperCase().includes(s)));
 
   preferred.sort((a, b) => b.score - a.score);
   neutral.sort((a, b) => b.score - a.score);
-  deprioritized.sort((a, b) => b.score - a.score);
 
-  const reordered: ScanResult[] = [...preferred, ...neutral, ...deprioritized];
-  results.splice(0, results.length, ...reordered);
+  const reordered: ScanResult[] = [...preferred, ...neutral];
 
   // 5. Print ranked table
   console.log(`\n${"═".repeat(70)}`);
   console.log(`  ${"#".padEnd(3)} ${"TICKER".padEnd(30)} ${"PRICE".padStart(6)} ${"VOL".padStart(8)} ${"DAYS".padStart(5)} ${"SCORE".padStart(6)}`);
   console.log(`${"─".repeat(70)}`);
 
-  const top = results.slice(0, 20);
+  const top = reordered.slice(0, 20);
   for (let i = 0; i < top.length; i++) {
     const r = top[i];
     const flagMark = r.flags.length ? " 🚩" : "";
-    const category = PREFERRED_SERIES.some(s => r.ticker.includes(s)) ? " ⭐" : "";
+    const category = PREFERRED_SERIES.some(s => r.ticker.toUpperCase().includes(s)) ? " ⭐" : "";
     console.log(
       `  ${String(i + 1).padEnd(3)} ${r.ticker.padEnd(30)} ` +
       `$${r.lastPrice.toFixed(2).padStart(5)} ` +
@@ -272,21 +295,21 @@ async function runScan(client: KalshiClient): Promise<ScanResult[]> {
   }
 
   console.log(`${"═".repeat(70)}`);
-  console.log(`  Top ${Math.min(20, results.length)} of ${results.length} tradeable markets`);
-  console.log(`  ⭐ Politics/Econ: ${preferred.length} | Neutral: ${neutral.length} | Sports: ${deprioritized.length}`);
+  console.log(`  Top ${Math.min(20, reordered.length)} shown | ⭐ Econ/Politics: ${preferred.length} | Neutral: ${neutral.length}`);
 
-  // 6. Save to JSON
+  // 6. Save top markets for researcher
   const output = {
     timestamp: new Date().toISOString(),
     env: ENV,
     totalScanned: allMarkets.length,
-    tradeableCount: results.length,
-    markets: results.slice(0, MAX_MARKETS_TO_RESEARCH),
+    blockedCount: blocked.length,
+    tradeableCount: reordered.length,
+    markets: reordered.slice(0, MAX_MARKETS_TO_RESEARCH),
   };
   fs.writeFileSync("scan_results.json", JSON.stringify(output, null, 2));
   console.log("\n  ✓ Results saved to scan_results.json\n");
 
-  return results;
+  return reordered;
 }
 
 // ─── ENTRYPOINT ────────────────────────────────────────────

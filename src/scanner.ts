@@ -304,10 +304,12 @@ const parlays = results.filter(r => r.ticker.includes("KXMVE"));
 singleEvent.sort((a, b) => b.score - a.score);
 parlays.sort((a, b) => b.score - a.score);
 
-// Interleave: 2 single-event for every 1 parlay
-const reordered: typeof results = [];
+// Interleave: 4 single-event for every 1 parlay
+const reordered: ScanResult[] = [];
 let si = 0, pi = 0;
 while (si < singleEvent.length || pi < parlays.length) {
+  if (si < singleEvent.length) reordered.push(singleEvent[si++]);
+  if (si < singleEvent.length) reordered.push(singleEvent[si++]);
   if (si < singleEvent.length) reordered.push(singleEvent[si++]);
   if (si < singleEvent.length) reordered.push(singleEvent[si++]);
   if (pi < parlays.length) reordered.push(parlays[pi++]);

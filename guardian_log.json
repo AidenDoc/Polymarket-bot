@@ -3695,5 +3695,69 @@
     "diagnosis": "No diagnosis available",
     "actionTaken": "No auto-fix applied",
     "fixed": false
+  },
+  {
+    "timestamp": "2026-05-25T15:29:13.414Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T15:29:13.414Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 8,
+          "cpu": "0.1%",
+          "memory": "54mb",
+          "uptime": "4m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.3%",
+          "memory": "35mb",
+          "uptime": "165m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": [
+        "Process \"kalshi-bot\" has restarted 8 times — possible crash loop"
+      ]
+    },
+    "diagnosis": "No diagnosis available",
+    "actionTaken": "No auto-fix applied",
+    "fixed": false
+  },
+  {
+    "timestamp": "2026-05-25T15:34:13.955Z",
+    "healthReport": {
+      "timestamp": "2026-05-25T15:34:13.955Z",
+      "processes": [
+        {
+          "name": "kalshi-bot",
+          "status": "online",
+          "restarts": 9,
+          "cpu": "0.2%",
+          "memory": "53mb",
+          "uptime": "1m"
+        },
+        {
+          "name": "kalshi-dashboard",
+          "status": "online",
+          "restarts": 0,
+          "cpu": "0.4%",
+          "memory": "34mb",
+          "uptime": "170m"
+        }
+      ],
+      "dashboardReachable": true,
+      "errorLogSnippet": "Killed\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\nKilled\n\n---\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\nError: listen EADDRINUSE: address already in use 0.0.0.0:3000\n    at Server.setupListenHandle [as _listen2] (node:net:1908:16)\n    at listenInCluster (node:net:1965:12)\n    at doListen (node:net:2139:7)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21) {\n  code: 'EADDRINUSE',\n  errno: -98,\n  syscall: 'listen',\n  address: '0.0.0.0',\n  port: 3000\n}\n",
+      "issues": [
+        "Process \"kalshi-bot\" has restarted 9 times — possible crash loop"
+      ]
+    },
+    "diagnosis": "No diagnosis available",
+    "actionTaken": "No auto-fix applied",
+    "fixed": false
   }
 ]

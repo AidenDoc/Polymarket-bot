@@ -19,7 +19,7 @@ const PRIVATE_KEY_PATH = process.env.KALSHI_PRIVATE_KEY_PATH ?? "./kalshi_privat
 const ENV = process.env.KALSHI_ENV ?? "demo";
 const BASE_URL = ENV === "demo"
   ? "https://demo-api.kalshi.co/trade-api/v2"
-  : "https://api.kalshi.com/trade-api/v2";
+  : "https://api.elections.kalshi.com/trade-api/v2";
 
 const PORTFOLIO_FILE = "portfolio.json";
 const TRADE_LOG_FILE = "trade_log.json";

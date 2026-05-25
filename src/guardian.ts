@@ -1,8 +1,7 @@
 /**
  * ============================================================
  *  KALSHI BOT — GUARDIAN AGENT
- *  AI-powered monitor that watches your bot 24/7,
- *  auto-fixes issues, and sends Telegram notifications.
+ *  Monitors bot 24/7, auto-fixes issues, sends Telegram alerts
  * ============================================================
  */
 
@@ -15,17 +14,20 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const CHECK_INTERVAL_MS = 5 * 60 * 1000;
-const DASHBOARD_URL = "http://localhost:3000";
+const CHECK_INTERVAL_MS = 5 * 60 * 1000;       // check every 5 min
+const ALERT_COOLDOWN_MS = 15 * 60 * 1000;      // only alert once per 15 min per issue
+const DASHBOARD_URL = "http://localhost:3001";  // bot serves on 3001
 const GUARDIAN_LOG = "guardian_log.json";
 const BOT_ERROR_LOG = path.join(process.env.HOME || "/root", ".pm2/logs/kalshi-bot-error.log");
 const DASHBOARD_ERROR_LOG = path.join(process.env.HOME || "/root", ".pm2/logs/kalshi-dashboard-error.log");
-const MAX_RESTARTS_BEFORE_ALERT = 5;
 const MAX_LOG_ENTRIES = 200;
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
 const WATCHED_PROCESSES = ["kalshi-bot", "kalshi-dashboard"];
 
+// Track state to prevent spam
+let lastAlertTime: Record<string, number> = {};
+let lastRestartCounts: Record<string, number> = {};
 let lastKnownTradeCount = 0;
 let lastDailySummaryDate = "";
 
@@ -49,7 +51,6 @@ interface HealthReport {
 interface GuardianLogEntry {
   timestamp: string;
   healthReport: HealthReport;
-  diagnosis: string;
   actionTaken: string;
   fixed: boolean;
 }
@@ -64,8 +65,7 @@ interface Trade {
 }
 
 function log(msg: string) {
-  const ts = new Date().toISOString();
-  console.log(`[${ts}] [GUARDIAN] ${msg}`);
+  console.log(`[${new Date().toISOString()}] [GUARDIAN] ${msg}`);
 }
 
 function readLog(filePath: string, lines = 50): string {
@@ -73,18 +73,14 @@ function readLog(filePath: string, lines = 50): string {
     if (!fs.existsSync(filePath)) return "";
     const content = fs.readFileSync(filePath, "utf-8");
     return content.split("\n").slice(-lines).join("\n");
-  } catch {
-    return "";
-  }
+  } catch { return ""; }
 }
 
 function loadJson(file: string): any {
   try {
     if (!fs.existsSync(file)) return null;
     return JSON.parse(fs.readFileSync(file, "utf-8"));
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
 function sleep(ms: number): Promise<void> {
@@ -104,7 +100,7 @@ function appendGuardianLog(entry: GuardianLogEntry) {
 function sendTelegram(message: string): Promise<void> {
   return new Promise((resolve) => {
     if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
-      log("Telegram not configured — skipping notification");
+      log("Telegram not configured — skipping");
       resolve();
       return;
     }
@@ -125,6 +121,17 @@ function sendTelegram(message: string): Promise<void> {
   });
 }
 
+// Only send alert if cooldown has passed for this issue type
+function shouldAlert(key: string): boolean {
+  const last = lastAlertTime[key] || 0;
+  const now = Date.now();
+  if (now - last > ALERT_COOLDOWN_MS) {
+    lastAlertTime[key] = now;
+    return true;
+  }
+  return false;
+}
+
 function getPm2Status(): ProcessStatus[] {
   try {
     const result = spawnSync("pm2", ["jlist"], { encoding: "utf-8" });
@@ -138,7 +145,9 @@ function getPm2Status(): ProcessStatus[] {
         restarts: p.pm2_env?.restart_time || 0,
         cpu: `${p.monit?.cpu || 0}%`,
         memory: `${Math.round((p.monit?.memory || 0) / 1024 / 1024)}mb`,
-        uptime: p.pm2_env?.pm_uptime ? `${Math.round((Date.now() - p.pm2_env.pm_uptime) / 60000)}m` : "unknown",
+        uptime: p.pm2_env?.pm_uptime
+          ? `${Math.round((Date.now() - p.pm2_env.pm_uptime) / 60000)}m`
+          : "unknown",
       }));
   } catch { return []; }
 }
@@ -197,134 +206,102 @@ async function checkDailySummary() {
       `📈 Total P&L: ${totalPnl >= 0 ? "+" : ""}$${totalPnl.toFixed(2)}\n` +
       `🏆 Win Rate: ${(winRate * 100).toFixed(1)}%\n` +
       `📋 Total Trades: ${trades}\n` +
-      `📅 Date: ${today}\n\n` +
-      `🤖 Bot is running smoothly on Kalshi`;
+      `📅 Date: ${today}`;
     await sendTelegram(msg);
     log("Daily summary sent");
   }
 }
 
-function detectIssues(processes: ProcessStatus[], dashboardReachable: boolean, errorLog: string): string[] {
+function detectIssues(processes: ProcessStatus[], errorLog: string): string[] {
   const issues: string[] = [];
+
   for (const proc of processes) {
-    if (proc.status !== "online") issues.push(`Process "${proc.name}" is ${proc.status} (not online)`);
-    if (proc.restarts > MAX_RESTARTS_BEFORE_ALERT) issues.push(`Process "${proc.name}" has restarted ${proc.restarts} times — possible crash loop`);
+    // Only flag if status is not online
+    if (proc.status !== "online") {
+      issues.push(`${proc.name} is ${proc.status}`);
+      continue;
+    }
+
+    // Only flag restart loops if restarts INCREASED since last check
+    const prevRestarts = lastRestartCounts[proc.name] ?? proc.restarts;
+    const newRestarts = proc.restarts - prevRestarts;
+    if (newRestarts >= 3) {
+      issues.push(`${proc.name} restarted ${newRestarts} times in last 5 min — crash loop`);
+    }
+    lastRestartCounts[proc.name] = proc.restarts;
   }
-  if (WATCHED_PROCESSES.some((n) => !processes.find((p) => p.name === n))) {
-    const missing = WATCHED_PROCESSES.filter((n) => !processes.find((p) => p.name === n));
-    issues.push(`Missing processes: ${missing.join(", ")}`);
-  }
-  if (!dashboardReachable) issues.push("Dashboard is not reachable at localhost:3000");
-  if (errorLog.includes("ETIMEDOUT")) issues.push("Scanner ETIMEDOUT detected in error log");
-  if (errorLog.includes("ECONNREFUSED")) issues.push("Connection refused error in log — possible API key issue");
-  if (errorLog.includes("Cannot find module")) issues.push("Missing module error — npm install may be needed");
-  if (errorLog.includes("SyntaxError")) issues.push("Syntax error detected in logs");
-  if (errorLog.includes("out of memory") || errorLog.includes("heap")) issues.push("Memory issue detected — process may need restart");
-  if (errorLog.includes("Invalid API key") || errorLog.includes("401")) issues.push("API key error detected — check your .env file");
-  if (errorLog.includes("429") || errorLog.includes("rate limit")) issues.push("API rate limit hit — consider spacing out requests");
+
+  // Check for missing processes
+  const missing = WATCHED_PROCESSES.filter(n => !processes.find(p => p.name === n));
+  if (missing.length) issues.push(`Missing processes: ${missing.join(", ")}`);
+
+  // Error log checks
+  if (errorLog.includes("Cannot find module")) issues.push("Missing module — npm install needed");
+  if (errorLog.includes("out of memory") || errorLog.includes("heap")) issues.push("Memory issue detected");
+  if (errorLog.includes("Invalid API key") || errorLog.includes("401")) issues.push("API key error — check .env");
+  if (errorLog.includes("429") || errorLog.includes("rate limit")) issues.push("API rate limit hit");
+
   return issues;
-}
-
-async function getDiagnosis(report: HealthReport): Promise<string> {
-  const prompt = `You are an expert DevOps agent monitoring a Kalshi prediction market trading bot running on a Ubuntu VPS with PM2.
-
-Here is the current health report:
-- Timestamp: ${report.timestamp}
-- Processes: ${JSON.stringify(report.processes, null, 2)}
-- Dashboard reachable: ${report.dashboardReachable}
-- Detected issues: ${report.issues.join("; ")}
-- Recent error log snippet:
-${report.errorLogSnippet}
-
-Based on this, provide:
-1. A brief diagnosis of what's wrong (2-3 sentences max)
-2. The recommended fix (be specific — exact commands if needed)
-3. Whether this is AUTO-FIXABLE (just a restart) or NEEDS MANUAL ATTENTION
-
-Format your response as:
-DIAGNOSIS: <diagnosis>
-FIX: <fix>
-AUTO-FIXABLE: <YES or NO>`;
-
-  return new Promise((resolve) => {
-    const body = JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 500,
-      messages: [{ role: "user", content: prompt }],
-    });
-    const options = {
-      hostname: "api.anthropic.com",
-      path: "/v1/messages",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "anthropic-version": "2023-06-01",
-        "x-api-key": process.env.ANTHROPIC_API_KEY || "",
-      },
-    };
-    const req = https.request(options, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => {
-        try {
-          const parsed = JSON.parse(data);
-          resolve(parsed.content?.[0]?.text || "No diagnosis available");
-        } catch { resolve("Failed to parse Claude response"); }
-      });
-    });
-    req.on("error", () => resolve("Claude API unreachable"));
-    req.write(body);
-    req.end();
-  });
 }
 
 async function attemptAutoFix(issues: string[]): Promise<string> {
   const actions: string[] = [];
+
   for (const issue of issues) {
-    if (issue.includes("is stopped") || issue.includes("is errored")) {
-      const match = issue.match(/Process "(.+?)"/);
+    // Auto-restart any process that's not online
+    if (issue.includes("is stopped") || issue.includes("is errored") || issue.includes("is undefined")) {
+      const match = issue.match(/^(kalshi-\w+)/);
       if (match) {
         try {
           execSync(`pm2 restart ${match[1]}`, { timeout: 15000 });
-          actions.push(`Restarted ${match[1]}`);
-        } catch { actions.push(`Failed to restart ${match[1]}`); }
+          actions.push(`✅ Restarted ${match[1]}`);
+          log(`Auto-restarted ${match[1]}`);
+        } catch { actions.push(`❌ Failed to restart ${match[1]}`); }
       }
     }
-    if (issue.includes("possible crash loop") && issue.includes("kalshi-dashboard")) {
+
+    // Auto-fix crash loops for kalshi-bot
+    if (issue.includes("kalshi-bot") && issue.includes("crash loop")) {
+      try {
+        execSync("pm2 restart kalshi-bot", { timeout: 15000 });
+        execSync("pm2 reset kalshi-bot", { timeout: 5000 });
+        actions.push("✅ Restarted kalshi-bot and reset crash counter");
+        log("Auto-fixed kalshi-bot crash loop");
+      } catch { actions.push("❌ Failed to fix kalshi-bot crash loop"); }
+    }
+
+    // Auto-fix crash loops for kalshi-dashboard (port conflict)
+    if (issue.includes("kalshi-dashboard") && issue.includes("crash loop")) {
       try {
         try { execSync("fuser -k 3000/tcp", { timeout: 5000 }); } catch {}
         await sleep(2000);
         execSync("pm2 restart kalshi-dashboard", { timeout: 15000 });
         execSync("pm2 reset kalshi-dashboard", { timeout: 5000 });
-        actions.push("Cleared port 3000 and reset crash loop for kalshi-dashboard");
-      } catch { actions.push("Failed to fix kalshi-dashboard crash loop"); }
+        actions.push("✅ Cleared port 3000, restarted kalshi-dashboard");
+        log("Auto-fixed kalshi-dashboard crash loop");
+      } catch { actions.push("❌ Failed to fix kalshi-dashboard crash loop"); }
     }
+
+    // Re-start missing processes
     if (issue.includes("Missing processes")) {
       if (issue.includes("kalshi-bot")) {
         try {
           execSync('pm2 start npm --name "kalshi-bot" -- run bot', { timeout: 15000 });
-          actions.push("Re-started kalshi-bot");
-        } catch { actions.push("Failed to re-start kalshi-bot"); }
+          actions.push("✅ Re-launched kalshi-bot");
+        } catch { actions.push("❌ Failed to launch kalshi-bot"); }
       }
       if (issue.includes("kalshi-dashboard")) {
         try {
           try { execSync("fuser -k 3000/tcp", { timeout: 5000 }); } catch {}
           await sleep(2000);
           execSync('pm2 start npx --name "kalshi-dashboard" -- ts-node src/dashboard.ts', { timeout: 15000 });
-          actions.push("Re-started kalshi-dashboard");
-        } catch { actions.push("Failed to re-start kalshi-dashboard"); }
+          actions.push("✅ Re-launched kalshi-dashboard");
+        } catch { actions.push("❌ Failed to launch kalshi-dashboard"); }
       }
     }
-    if (issue.includes("Dashboard is not reachable")) {
-      try {
-        try { execSync("fuser -k 3000/tcp", { timeout: 5000 }); } catch {}
-        await sleep(2000);
-        execSync("pm2 restart kalshi-dashboard", { timeout: 15000 });
-        actions.push("Cleared port 3000 and restarted kalshi-dashboard");
-      } catch { actions.push("Failed to restart kalshi-dashboard"); }
-    }
   }
-  return actions.length > 0 ? actions.join("; ") : "No auto-fix applied";
+
+  return actions.length > 0 ? actions.join("\n") : "No action needed";
 }
 
 async function runHealthCheck() {
@@ -334,50 +311,78 @@ async function runHealthCheck() {
   const botErrorLog = readLog(BOT_ERROR_LOG, 30);
   const dashErrorLog = readLog(DASHBOARD_ERROR_LOG, 20);
   const errorLogSnippet = [botErrorLog, dashErrorLog].filter(Boolean).join("\n---\n").slice(0, 2000);
-  const issues = detectIssues(processes, dashboardReachable, errorLogSnippet);
+  const issues = detectIssues(processes, errorLogSnippet);
+
   await checkForNewTrades();
   await checkDailySummary();
-  const report: HealthReport = { timestamp: new Date().toISOString(), processes, dashboardReachable, errorLogSnippet, issues };
+
+  const report: HealthReport = {
+    timestamp: new Date().toISOString(),
+    processes,
+    dashboardReachable,
+    errorLogSnippet,
+    issues,
+  };
+
   if (issues.length === 0) {
     log("✅ All systems healthy");
-    appendGuardianLog({ timestamp: report.timestamp, healthReport: report, diagnosis: "All systems healthy", actionTaken: "None", fixed: true });
+    appendGuardianLog({ timestamp: report.timestamp, healthReport: report, actionTaken: "None", fixed: true });
     return;
   }
-  log(`⚠️  ${issues.length} issue(s) detected: ${issues.join(" | ")}`);
-  log("Calling Claude API for diagnosis...");
-  const diagnosis = await getDiagnosis(report);
-  log(`Diagnosis: ${diagnosis}`);
+
+  log(`⚠️  ${issues.length} issue(s): ${issues.join(" | ")}`);
+
+  // Attempt auto-fix first
   const actionTaken = await attemptAutoFix(issues);
   log(`Action taken: ${actionTaken}`);
-  const needsManual = diagnosis.includes("NEEDS MANUAL ATTENTION") || actionTaken === "No auto-fix applied";
-  const emoji = needsManual ? "🔴" : "⚠️";
-  const status = needsManual ? "NEEDS YOUR ATTENTION" : "AUTO-FIXED";
-  const telegramMsg =
-    `${emoji} <b>KALSHI BOT ALERT — ${status}</b>\n\n` +
-    `🔍 Issues:\n${issues.map((i) => `• ${i}`).join("\n")}\n\n` +
-    `🤖 Diagnosis:\n${diagnosis.replace("DIAGNOSIS: ", "").split("FIX:")[0].trim()}\n\n` +
-    `🔧 Action Taken: ${actionTaken}\n\n` +
-    `📊 Dashboard: http://159.223.189.172:3000`;
-  await sendTelegram(telegramMsg);
-  appendGuardianLog({ timestamp: report.timestamp, healthReport: report, diagnosis, actionTaken, fixed: actionTaken !== "No auto-fix applied" });
+
+  // Only send Telegram if cooldown allows
+  const alertKey = issues.join("|");
+  if (shouldAlert(alertKey)) {
+    const fixed = !actionTaken.includes("❌") && actionTaken !== "No action needed";
+    const emoji = fixed ? "⚠️" : "🔴";
+    const status = fixed ? "AUTO-FIXED ✅" : "NEEDS ATTENTION";
+    const msg =
+      `${emoji} <b>KALSHI BOT — ${status}</b>\n\n` +
+      `🔍 Issues:\n${issues.map(i => `• ${i}`).join("\n")}\n\n` +
+      `🔧 Actions:\n${actionTaken}\n\n` +
+      `📊 Dashboard: http://159.223.189.172:3000`;
+    await sendTelegram(msg);
+  } else {
+    log("Alert suppressed — cooldown active");
+  }
+
+  appendGuardianLog({
+    timestamp: report.timestamp,
+    healthReport: report,
+    actionTaken,
+    fixed: !actionTaken.includes("❌"),
+  });
 }
 
 async function main() {
   log("=".repeat(55));
   log("  KALSHI BOT — GUARDIAN AGENT STARTED");
   log(`  Checking every ${CHECK_INTERVAL_MS / 60000} minutes`);
+  log(`  Alert cooldown: ${ALERT_COOLDOWN_MS / 60000} minutes`);
   log(`  Watching: ${WATCHED_PROCESSES.join(", ")}`);
   log(`  Telegram: ${TELEGRAM_CHAT_ID ? "configured ✅" : "not configured ❌"}`);
   log("=".repeat(55));
+
   await sendTelegram(
     `🚀 <b>KALSHI GUARDIAN STARTED</b>\n\n` +
     `✅ Watching: kalshi-bot, kalshi-dashboard\n` +
     `🔄 Health checks every 5 minutes\n` +
-    `📊 Dashboard: http://159.223.189.172:3000\n\n` +
-    `You'll be notified of trades, issues, and daily summaries.`
+    `🔕 Alert cooldown: 15 minutes (no spam)\n` +
+    `🤖 Auto-fix: enabled for all processes\n` +
+    `📊 Dashboard: http://159.223.189.172:3000`
   );
+
   await runHealthCheck();
   setInterval(async () => { await runHealthCheck(); }, CHECK_INTERVAL_MS);
 }
 
-main().catch((err) => { log(`Fatal error: ${err.message}`); process.exit(1); });
+main().catch(err => {
+  console.error("[FATAL]", err.message);
+  process.exit(1);
+});

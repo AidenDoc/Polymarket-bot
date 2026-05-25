@@ -32,10 +32,8 @@ const MAX_PRICE = 0.95;           // NEW: block near-certain markets (no edge)
 
 // Hard-blocked series — never trade these regardless of score
 const BLOCKED_SERIES = [
-  "MULTIGAME",      // sports parlays (5+ team combos)
-  "CROSSCATEGORY",  // mixed junk parlays
-  "KXMVESPORTS",    // sports multi-game extended
-  "KXMVECROSS",     // cross-category junk
+  "MULTIGAMEEXTENDED",   // sports parlays only
+  "CROSSCATEGORY",       // mixed junk parlays
 ];
 
 // Preferred series — economics, politics, macro

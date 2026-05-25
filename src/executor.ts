@@ -35,7 +35,7 @@ const MAX_POSITION_PCT = 0.05;      // Max 5% of bankroll per trade
 const MAX_CONCURRENT = 15;          // Max 15 open positions
 const MAX_DAILY_LOSS_PCT = 0.15;    // Stop trading if down 15% in a day
 const MAX_DRAWDOWN_PCT = 0.08;      // Block trades if drawdown > 8%
-const MIN_EDGE = 0.04;              // Minimum 4% edge required
+const MIN_EDGE = 0.02;          // Minimum 2% edge required
 const MAX_SLIPPAGE = 0.02;          // Abort if price moves > 2%
 const KILL_SWITCH_FILE = "STOP";    // Create this file to halt all trading
 

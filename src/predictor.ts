@@ -16,8 +16,8 @@ const GEMINI_KEY = process.env.GEMINI_API_KEY ?? "";
 const GROQ_KEY = process.env.GROQ_API_KEY ?? "";
 const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
 
-const MIN_EDGE = 0.04;
-const MIN_CONFIDENCE = 0.6;
+const MIN_EDGE = 0.02;          // Minimum 2% edge required
+const MIN_CONFIDENCE = 0.5;
 const MODEL_WEIGHTS = {
   claude: 0.30,
   gemini: 0.25,

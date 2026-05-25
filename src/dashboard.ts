@@ -840,7 +840,7 @@ const server = http.createServer((req, res) => {
   res.end(getDashboardHtml());
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`\n${"═".repeat(55)}`);
   console.log(`  KALSHI BOT DASHBOARD`);
   console.log(`${"═".repeat(55)}`);

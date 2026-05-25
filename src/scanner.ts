@@ -19,7 +19,7 @@ const PRIVATE_KEY_PATH = process.env.KALSHI_PRIVATE_KEY_PATH ?? "./kalshi_privat
 const ENV = process.env.KALSHI_ENV ?? "demo";
 const BASE_URL = ENV === "demo"
   ? "https://demo-api.kalshi.co/trade-api/v2"
-  : "https://api.elections.kalshi.com/trade-api/v2";
+  : "https://api.kalshi.com/trade-api/v2";
 
 const MIN_VOLUME = 100;           // raised: junk markets have tiny volume
 const MAX_DAYS_TO_EXPIRY = 7;

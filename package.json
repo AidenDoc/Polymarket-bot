@@ -1,0 +1,28 @@
+{
+  "name": "kalshi-bot",
+  "version": "1.0.0",
+  "description": "AI-powered prediction market trading bot",
+  "main": "dist/scanner.js",
+  "scripts": {
+    "scan": "ts-node src/scanner.ts",
+    "research": "ts-node src/researcher.ts",
+    "predict": "ts-node src/predictor.ts",
+    "execute": "ts-node src/executor.ts",
+    "compound": "ts-node src/compounder.ts",
+    "dashboard": "ts-node src/dashboard.ts",
+    "bot": "ts-node src/bot.ts",
+    "build": "tsc",
+    "start": "node dist/scanner.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/node-cron": "^3.0.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  }
+}

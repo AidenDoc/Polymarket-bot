@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+*.key
+*.pem
+bot_log.json
+calibration_log.json
+research_results.json
+scan_results.json
+signal_results.json
+execution_log.json
+trade_log.json
+performance_metrics.json
+portfolio.json
+knowledge_base.json

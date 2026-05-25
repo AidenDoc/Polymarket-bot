@@ -36,7 +36,7 @@ const BASE_URL =
     ? "https://demo-api.kalshi.co/trade-api/v2"
 : "https://api.elections.kalshi.com/trade-api/v2";// Scanner filters
 const MIN_VOLUME = 50;
-const MAX_DAYS_TO_EXPIRY = 30;
+const MAX_DAYS_TO_EXPIRY = 3;
 const MIN_OPEN_INTEREST = 50;
 const MAX_MARKETS_TO_RESEARCH = 10;
 

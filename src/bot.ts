@@ -21,7 +21,7 @@ dotenv.config();
 const SCAN_INTERVAL_MINUTES = 15;
 const KILL_SWITCH_FILE = "STOP";
 const LOG_FILE = "bot_log.json";
-const PORT = 3000;
+const PORT = 3001;
 
 // ─────────────────────────────────────────────────
 // LOGGER

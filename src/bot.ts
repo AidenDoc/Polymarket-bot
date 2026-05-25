@@ -50,7 +50,7 @@ function runStep(name: string, script: string): boolean {
     log("Running " + name + "...");
     execSync("npx ts-node src/" + script, {
       stdio: "pipe",
-      timeout: 300000,
+      timeout: 600000,
     });
     log(name + " complete");
     return true;

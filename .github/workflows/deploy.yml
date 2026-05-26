@@ -1,0 +1,21 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 159.223.189.172
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/Kalshi-bot
+            git pull
+            pm2 restart kalshi-bot

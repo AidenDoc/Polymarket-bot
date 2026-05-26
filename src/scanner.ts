@@ -22,12 +22,12 @@ const BASE_URL = ENV === "demo"
   : "https://api.elections.kalshi.com/trade-api/v2";
 
 const MIN_VOLUME = 100;           // raised: junk markets have tiny volume
-const MAX_DAYS_TO_EXPIRY = 7;
+const MAX_DAYS_TO_EXPIRY = 30;
 const MIN_OPEN_INTEREST = 50;    // raised: need real liquidity
 const MAX_MARKETS_TO_RESEARCH = 10;
 const PRICE_SPIKE_THRESHOLD = 0.1;
 const SPREAD_THRESHOLD = 0.05;
-const MIN_PRICE = 0.04;           // NEW: block sub-5¢ lottery tickets
+const MIN_PRICE = 0.10;           // NEW: block sub-5¢ lottery tickets
 const MAX_PRICE = 0.95;           // NEW: block near-certain markets (no edge)
 
 // Hard-blocked series — never trade these regardless of score

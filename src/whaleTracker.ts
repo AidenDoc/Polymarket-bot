@@ -27,7 +27,10 @@ const SPORTS_KEYWORDS = [
   "dota", "nba", "nfl", "mlb", "nhl", "soccer", "football",
   "basketball", "esport", "gaming",
   "up or down", "bitcoin up", "ethereum up", "15 min", "5 min", "1 hour",
+  "iem", "cologne", "major", "billboard", "netflix", "tweet", "post from",
 ];
+
+const MIN_USDC_SIZE = 5;
 
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
@@ -82,6 +85,7 @@ export async function getWhaleSignals(): Promise<WhaleSignal[]> {
         if (tx.side?.toUpperCase() !== "BUY") continue;
         if (!isRecent(tx.timestamp)) continue;
         if (isSports(tx.title ?? "")) continue;
+        if ((tx.usdcSize ?? 0) < MIN_USDC_SIZE) continue;
 
         signals.push({
           walletAddress: address,

@@ -33,7 +33,8 @@ const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
 
 // ─── TYPES ─────────────────────────────────────────────────
 interface PolymarketActivity {
-  type: string;
+  type: string;   // "TRADE"
+  side: string;   // "BUY" or "SELL"
   conditionId: string;
   title: string;
   outcome: string;
@@ -78,7 +79,7 @@ export async function getWhaleSignals(): Promise<WhaleSignal[]> {
       const activity = await fetchWalletActivity(address);
 
       for (const tx of activity) {
-        if (tx.type?.toUpperCase() !== "BUY") continue;
+        if (tx.side?.toUpperCase() !== "BUY") continue;
         if (!isRecent(tx.timestamp)) continue;
         if (isSports(tx.title ?? "")) continue;
 

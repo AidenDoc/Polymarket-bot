@@ -76,12 +76,13 @@ async function runPipeline(): Promise<void> {
   console.log("═".repeat(55));
 
   const steps = [
-    { name: "Step 1: Scanner",   script: "scanner.ts"    },
-    { name: "Step 2: Research",  script: "researcher.ts" },
-    { name: "Step 3: Sentiment", script: "sentiment.ts"  },
-    { name: "Step 4: Predictor", script: "predictor.ts"  },
-    { name: "Step 5: Executor",  script: "executor.ts"   },
-    { name: "Step 6: Closer",    script: "closer.ts"     },
+    { name: "Step 1: Whale Tracker", script: "whaleTracker.ts"  },
+    { name: "Step 2: Scanner",       script: "marketScanner.ts" },
+    { name: "Step 3: Research",      script: "researcher.ts"    },
+    { name: "Step 4: Sentiment",     script: "sentiment.ts"     },
+    { name: "Step 5: Predictor",     script: "predictor.ts"     },
+    { name: "Step 6: Executor",      script: "executor.ts"      },
+    { name: "Step 7: Closer",        script: "closer.ts"        },
   ];
 
   for (const step of steps) {
@@ -125,10 +126,11 @@ function loadJson(file: string): any {
 function getApiData(): string {
   const metrics = loadJson("performance_metrics.json");
   return JSON.stringify({
+    whale:     loadJson("whale_signals.json"),
     scan:      loadJson("scan_results.json"),
     research:  loadJson("research_results.json"),
     sentiment: loadJson("sentiment_results.json"),
-    signals:   loadJson("signal_results.json"),
+    predictor: loadJson("predictor_results.json"),
     portfolio: loadJson("portfolio.json"),
     metrics:   metrics ? metrics[metrics.length - 1] : null,
     kb:        loadJson("knowledge_base.json"),
@@ -231,19 +233,21 @@ function getDashboardHtml(): string {
     "  </div>",
     "</div>",
     "<div class='main'>",
-    // 6-step pipeline display
+    // 7-step pipeline display
     "  <div class='pipe'>",
-    "    <div class='step' id='p1'><div class='snum'>1</div><div class='sname'>Scanner</div><div class='sstat' id='s1'>—</div></div>",
+    "    <div class='step' id='p1'><div class='snum'>1</div><div class='sname'>Whales</div><div class='sstat' id='s1'>—</div></div>",
     "    <div class='arrow'>→</div>",
-    "    <div class='step' id='p2'><div class='snum'>2</div><div class='sname'>Research</div><div class='sstat' id='s2'>—</div></div>",
+    "    <div class='step' id='p2'><div class='snum'>2</div><div class='sname'>Scanner</div><div class='sstat' id='s2'>—</div></div>",
     "    <div class='arrow'>→</div>",
-    "    <div class='step' id='p3'><div class='snum'>3</div><div class='sname'>Sentiment</div><div class='sstat' id='s3'>—</div></div>",
+    "    <div class='step' id='p3'><div class='snum'>3</div><div class='sname'>Research</div><div class='sstat' id='s3'>—</div></div>",
     "    <div class='arrow'>→</div>",
-    "    <div class='step' id='p4'><div class='snum'>4</div><div class='sname'>Predictor</div><div class='sstat' id='s4'>—</div></div>",
+    "    <div class='step' id='p4'><div class='snum'>4</div><div class='sname'>Sentiment</div><div class='sstat' id='s4'>—</div></div>",
     "    <div class='arrow'>→</div>",
-    "    <div class='step' id='p5'><div class='snum'>5</div><div class='sname'>Executor</div><div class='sstat' id='s5'>—</div></div>",
+    "    <div class='step' id='p5'><div class='snum'>5</div><div class='sname'>Predictor</div><div class='sstat' id='s5'>—</div></div>",
     "    <div class='arrow'>→</div>",
-    "    <div class='step' id='p6'><div class='snum'>6</div><div class='sname'>Closer</div><div class='sstat' id='s6'>—</div></div>",
+    "    <div class='step' id='p6'><div class='snum'>6</div><div class='sname'>Executor</div><div class='sstat' id='s6'>—</div></div>",
+    "    <div class='arrow'>→</div>",
+    "    <div class='step' id='p7'><div class='snum'>7</div><div class='sname'>Closer</div><div class='sstat' id='s7'>—</div></div>",
     "  </div>",
     "  <div class='g4'>",
     "    <div class='card'><div class='ct'>Bankroll</div><div class='mv' id='bnk'>—</div><div class='ms' id='roi'>—</div></div>",
@@ -276,10 +280,10 @@ function getDashboardHtml(): string {
     "async function stopBot(){await fetch('/api/stop');document.getElementById('dot').style.background='#ef4444';document.getElementById('stxt').textContent='STOPPED';alert('Kill switch activated.');}",
     "async function resumeBot(){await fetch('/api/resume');document.getElementById('dot').style.background='#22c55e';document.getElementById('stxt').textContent='RUNNING';alert('Trading resumed.');}",
     "function renderAll(){rPipe();rMetrics();rSigs();rPos();rMkts();rTrades();rKB();rLog();}",
-    // Updated rPipe to check 6 data sources
-    "function rPipe(){var keys=[data.scan,data.research,data.sentiment,data.signals,data.execLog,data.kb];for(var i=0;i<6;i++){var el=document.getElementById('p'+(i+1));var st=document.getElementById('s'+(i+1));if(keys[i]){el.className='step done';st.textContent='Done';}else{el.className='step';st.textContent='Pending';}}}",
+    // Updated rPipe to check 7 data sources
+    "function rPipe(){var keys=[data.whale,data.scan,data.research,data.sentiment,data.predictor,data.execLog,data.metrics];for(var i=0;i<7;i++){var el=document.getElementById('p'+(i+1));var st=document.getElementById('s'+(i+1));if(keys[i]){el.className='step done';st.textContent='Done';}else{el.className='step';st.textContent='Pending';}}}",
     "function rMetrics(){var p=data.portfolio;var m=data.metrics;if(p){var roi=((p.bankroll-p.startingBankroll)/p.startingBankroll*100);var tot=(p.winCount||0)+(p.lossCount||0);var wr=tot>0?(p.winCount/tot*100):0;var op=(p.positions||[]).filter(function(x){return x.status==='OPEN';}).length;document.getElementById('bnk').textContent='$'+(p.bankroll||0).toFixed(2);document.getElementById('roi').textContent=(roi>=0?'+':'')+roi.toFixed(1)+'% ROI';document.getElementById('pnl').textContent=(p.totalPnl>=0?'+':'')+'$'+(p.totalPnl||0).toFixed(2);document.getElementById('pnl').className='mv '+(p.totalPnl>=0?'pos':'neg');document.getElementById('dpnl').textContent='Daily: '+(p.dailyPnl>=0?'+':'')+'$'+(p.dailyPnl||0).toFixed(2);document.getElementById('wr').textContent=wr.toFixed(1)+'%';document.getElementById('wr').className='mv '+(wr>=60?'pos':wr>=50?'wrn':'neg');document.getElementById('wl').textContent=(p.winCount||0)+'W / '+(p.lossCount||0)+'L';document.getElementById('op').textContent=op+'/15';}if(m){document.getElementById('sh').textContent=(m.sharpeRatio||0).toFixed(2);document.getElementById('sh').className='mv '+(m.sharpeRatio>=2?'pos':m.sharpeRatio>=1?'wrn':'neg');document.getElementById('shb').style.width=Math.min((m.sharpeRatio||0)/3*100,100)+'%';document.getElementById('dd').textContent=(m.maxDrawdown||0).toFixed(1)+'%';document.getElementById('dd').className='mv '+(m.maxDrawdown<=8?'pos':m.maxDrawdown<=15?'wrn':'neg');document.getElementById('ddb').style.width=Math.min((m.maxDrawdown||0)/20*100,100)+'%';document.getElementById('pf').textContent=(m.profitFactor||0).toFixed(2);document.getElementById('pf').className='mv '+(m.profitFactor>=1.5?'pos':m.profitFactor>=1?'wrn':'neg');document.getElementById('pfb').style.width=Math.min((m.profitFactor||0)/3*100,100)+'%';}}",
-    "function rSigs(){var el=document.getElementById('sigs');if(!data.signals||!data.signals.signals){el.innerHTML='<div class=\"empty\">No signals yet</div>';return;}var sigs=data.signals.signals.filter(function(s){return s.action!=='PASS';}).slice(0,5);if(!sigs.length){el.innerHTML='<div class=\"empty\">No actionable signals</div>';return;}el.innerHTML=sigs.map(function(s){var cls=s.action==='BUY_YES'?'yes':'no';var bc=s.action==='BUY_YES'?'bg':'br';var edge=s.edge?(s.edge>0?'+':'')+s.edge.toFixed(1)+'%':'—';return '<div class=\"sc '+cls+'\"><div class=\"sh\"><div><div class=\"stk\">'+(s.ticker||'').slice(0,45)+'</div><div class=\"sti\">'+(s.title||'').slice(0,55)+'</div></div><span class=\"badge '+bc+'\">'+s.action+'</span></div><div class=\"ss\"><div><div class=\"ssl\">Market</div><div class=\"ssv\">'+(s.marketImpliedProb||0).toFixed(1)+'%</div></div><div><div class=\"ssl\">AI Est.</div><div class=\"ssv\">'+(s.ensembleProbability||0).toFixed(1)+'%</div></div><div><div class=\"ssl\">Edge</div><div class=\"ssv '+(s.edge>0?'pos':'neg')+'\">'+edge+'</div></div><div><div class=\"ssl\">Conf.</div><div class=\"ssv\">'+((s.confidence||0)*100).toFixed(0)+'%</div></div></div></div>';}).join('');}",
+    "function rSigs(){var el=document.getElementById('sigs');if(!data.predictor||!data.predictor.signals){el.innerHTML='<div class=\"empty\">No signals yet</div>';return;}var sigs=data.predictor.signals.filter(function(s){return s.action!=='PASS';}).slice(0,5);if(!sigs.length){el.innerHTML='<div class=\"empty\">No actionable signals</div>';return;}el.innerHTML=sigs.map(function(s){var cls=s.action==='BUY_YES'?'yes':'no';var bc=s.action==='BUY_YES'?'bg':'br';var edge=s.edge?(s.edge>0?'+':'')+s.edge.toFixed(1)+'%':'—';return '<div class=\"sc '+cls+'\"><div class=\"sh\"><div><div class=\"stk\">'+(s.ticker||'').slice(0,45)+'</div><div class=\"sti\">'+(s.title||'').slice(0,55)+'</div></div><span class=\"badge '+bc+'\">'+s.action+'</span></div><div class=\"ss\"><div><div class=\"ssl\">Market</div><div class=\"ssv\">'+(s.marketImpliedProb||0).toFixed(1)+'%</div></div><div><div class=\"ssl\">AI Est.</div><div class=\"ssv\">'+(s.ensembleProbability||0).toFixed(1)+'%</div></div><div><div class=\"ssl\">Edge</div><div class=\"ssv '+(s.edge>0?'pos':'neg')+'\">'+edge+'</div></div><div><div class=\"ssl\">Conf.</div><div class=\"ssv\">'+((s.confidence||0)*100).toFixed(0)+'%</div></div></div></div>';}).join('');}",
     "function rPos(){var el=document.getElementById('pos');var open=(data.portfolio&&data.portfolio.positions?data.portfolio.positions:[]).filter(function(p){return p.status==='OPEN';});if(!open.length){el.innerHTML='<div class=\"empty\">No open positions</div>';return;}el.innerHTML=open.map(function(p){return '<div style=\"padding:10px;border-bottom:1px solid #111827\"><div style=\"display:flex;justify-content:space-between\"><span class=\"badge '+(p.action==='BUY_YES'?'bg':'br')+'\">'+p.action+'</span><span style=\"font-size:11px;color:#64748b\">'+p.contracts+' contracts</span></div><div style=\"font-size:11px;color:#60a5fa;margin-top:6px\">'+(p.ticker||'').slice(0,45)+'</div><div style=\"display:flex;justify-content:space-between;margin-top:4px\"><span style=\"font-size:11px;color:#94a3b8\">Entry: $'+(p.entryPrice||0).toFixed(4)+'</span><span style=\"font-size:11px;color:#94a3b8\">Cost: $'+(p.costBasis||0).toFixed(2)+'</span></div></div>';}).join('');}",
     "function rMkts(){var tbody=document.getElementById('mkt');if(!data.scan||!data.scan.markets){tbody.innerHTML='<tr><td colspan=\"6\" class=\"empty\">Waiting for scan</td></tr>';return;}tbody.innerHTML=data.scan.markets.slice(0,15).map(function(m,i){return '<tr><td style=\"color:#475569\">'+(i+1)+'</td><td style=\"color:#60a5fa;font-size:10px\">'+(m.ticker||'').slice(0,28)+'</td><td>$'+(m.lastPrice||0).toFixed(3)+'</td><td>'+(m.volume||0).toLocaleString()+'</td><td>'+(m.daysToExpiry||0).toFixed(1)+'d</td><td><span class=\"badge bb\">'+(m.score||0).toFixed(3)+'</span></td></tr>';}).join('');}",
     "function rTrades(){var tbody=document.getElementById('th');if(!data.trades||!data.trades.length){tbody.innerHTML='<tr><td colspan=\"5\" class=\"empty\">No closed trades yet</td></tr>';return;}tbody.innerHTML=data.trades.slice(-10).reverse().map(function(t){return '<tr><td style=\"font-size:10px;color:#60a5fa\">'+(t.ticker||'').slice(0,25)+'</td><td><span class=\"badge '+(t.action==='BUY_YES'?'bg':'br')+'\">'+(t.action||'—')+'</span></td><td>$'+(t.entryPrice||0).toFixed(4)+'</td><td class=\"'+(t.pnl>=0?'pos':'neg')+'\">'+(t.pnl>=0?'+':'')+'$'+(t.pnl||0).toFixed(2)+'</td><td><span class=\"badge '+(t.pnl>=0?'bg':'br')+'\">'+(t.pnl>=0?'WIN':'LOSS')+'</span></td></tr>';}).join('');}",
@@ -335,7 +339,7 @@ async function main(): Promise<void> {
   console.log("\n" + "═".repeat(55));
   console.log("  KALSHI BOT — MASTER ORCHESTRATOR");
   console.log("═".repeat(55));
-  console.log("  Mode: " + (process.env.PAPER_TRADE === "false" ? "LIVE" : "PAPER"));
+  console.log("  Mode: " + (process.env.PAPER_TRADING === "false" ? "LIVE" : "PAPER"));
   console.log("  Interval: every " + SCAN_INTERVAL_MINUTES + " minutes");
   console.log("  Dashboard: http://localhost:" + PORT);
   console.log("  Kill switch: create a STOP file to halt");

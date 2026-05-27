@@ -1,26 +1,25 @@
 /**
  * ====================================================
- *  PREDICTION MARKET TRADING BOT — STEP 4: EXECUTOR
- *  Risk management + Paper/Live trade execution
+ *  POLYMARKET TRADING BOT — STEP 5: EXECUTOR
+ *  Reads predictor signals → places Polymarket CLOB orders
  * ====================================================
+ *
+ * Prerequisites:
+ *   npm install ethers
  *
  * How to run:
  *   npx ts-node src/executor.ts
  *
- * PAPER MODE is ON by default. To go live:
- *   Set PAPER_TRADE=false in your .env file
- *   (only do this after monitoring paper trades)
- *
- * Kill switch: create a file called STOP in your
- *   kalshi-bot folder to halt all trading immediately
+ * Paper mode is ON by default. To trade live:
+ *   Set PAPER_TRADING=false in your .env file
  * ====================================================
  */
 
 import * as fs from "fs";
 import * as crypto from "crypto";
-import * as https from "https";
-import * as path from "path";
 import * as dotenv from "dotenv";
+import axios from "axios";
+import { ethers } from "ethers";
 
 dotenv.config();
 
@@ -28,515 +27,289 @@ dotenv.config();
 // CONFIG
 // ─────────────────────────────────────────────────
 
-const PAPER_TRADE = process.env.PAPER_TRADE !== "false"; // default ON
-const STARTING_BANKROLL = parseFloat(process.env.STARTING_BANKROLL ?? "1000");
-const KELLY_FRACTION = 0.25;        // Quarter-Kelly for safety
-const MAX_POSITION_PCT = 0.05;      // Max 5% of bankroll per trade
-const MAX_CONCURRENT = 15;          // Max 15 open positions
-const MAX_DAILY_LOSS_PCT = 0.15;    // Stop trading if down 15% in a day
-const MAX_DRAWDOWN_PCT = 0.08;      // Block trades if drawdown > 8%
-const MIN_EDGE = 0.02;          // Minimum 2% edge required
-const MAX_SLIPPAGE = 0.02;          // Abort if price moves > 2%
-const KILL_SWITCH_FILE = "STOP";    // Create this file to halt all trading
+const PAPER_TRADING      = process.env.PAPER_TRADING !== "false";
+const MAX_OPEN_POSITIONS = parseInt(process.env.MAX_OPEN_POSITIONS ?? "15");
+const POLYGON_PRIVATE_KEY = process.env.POLYGON_PRIVATE_KEY ?? "";
+const TELEGRAM_TOKEN     = process.env.TELEGRAM_BOT_TOKEN ?? "";
+const TELEGRAM_CHAT_ID   = process.env.TELEGRAM_CHAT_ID ?? "";
 
-// Kalshi API
-const KEY_ID = process.env.KALSHI_KEY_ID ?? "";
-const PRIVATE_KEY_PATH = process.env.KALSHI_PRIVATE_KEY_PATH ?? "./kalshi_private.key";
-const ENV = process.env.KALSHI_ENV ?? "demo";
-const BASE_URL =
-  ENV === "demo"
-    ? "https://demo-api.kalshi.co/trade-api/v2"
-    : "https://api.elections.kalshi.com/trade-api/v2";
+const CLOB_BASE_URL       = "https://clob.polymarket.com";
+// CTF Exchange on Polygon mainnet (binary markets)
+const CTF_EXCHANGE        = "0x4bFb41d5B3570DeFd03C39a9A4D8dE6Bd8B8982E";
+const CHAIN_ID            = 137;
+const USDC_DECIMALS       = 6;
+const KILL_SWITCH_FILE    = "STOP";
+
+const PREDICTOR_RESULTS_FILE = "predictor_results.json";
+const OPEN_POSITIONS_FILE    = "open_positions.json";
+const TRADE_HISTORY_FILE     = "trade_history.json";
 
 // ─────────────────────────────────────────────────
 // TYPES
 // ─────────────────────────────────────────────────
 
 interface TradeSignal {
-  ticker: string;
-  title: string;
+  conditionId: string;
+  question: string;
   marketPrice: number;
   marketImpliedProb: number;
   ensembleProbability: number;
   edge: number;
-  expectedValue: number;
   action: "BUY_YES" | "BUY_NO" | "PASS";
   confidence: number;
   suggestedPositionSize: number;
   riskFlags: string[];
   reasoning: string;
+  clobTokenIds: string[];
+  timestamp: string;
 }
 
-interface Position {
-  ticker: string;
-  title: string;
+interface OpenPosition {
+  conditionId: string;
+  question: string;
   action: "BUY_YES" | "BUY_NO";
-  contracts: number;
-  entryPrice: number;
-  costBasis: number;
-  openedAt: string;
-  status: "OPEN" | "CLOSED";
-  closedAt?: string;
-  exitPrice?: number;
-  pnl?: number;
-  outcome?: "WIN" | "LOSS" | "PUSH";
-}
-
-interface Portfolio {
-  bankroll: number;
-  startingBankroll: number;
-  cashAvailable: number;
-  positions: Position[];
-  dailyPnl: number;
-  dailyLossLimit: number;
-  totalPnl: number;
-  winCount: number;
-  lossCount: number;
-  lastResetDate: string;
-}
-
-interface RiskCheckResult {
-  passed: boolean;
-  reasons: string[];
-  approvedSize: number;
-}
-
-interface ExecutionResult {
-  success: boolean;
-  ticker: string;
-  action: string;
-  contracts: number;
+  tokenId: string;
   price: number;
-  costBasis: number;
-  paper: boolean;
+  sizeUsdc: number;
+  openedAt: string;
   orderId?: string;
+  paper: boolean;
+}
+
+interface TradeRecord {
+  conditionId: string;
+  question: string;
+  action: "BUY_YES" | "BUY_NO";
+  price: number;
+  size: number;
+  timestamp: string;
+  txHash?: string;
+  paper: boolean;
+}
+
+interface OrderResult {
+  success: boolean;
+  orderId?: string;
+  txHash?: string;
   error?: string;
 }
 
 // ─────────────────────────────────────────────────
-// PORTFOLIO STATE
+// UTILITIES
 // ─────────────────────────────────────────────────
 
-const PORTFOLIO_FILE = "portfolio.json";
-
-function loadPortfolio(): Portfolio {
-  if (fs.existsSync(PORTFOLIO_FILE)) {
-    try {
-      const p = JSON.parse(fs.readFileSync(PORTFOLIO_FILE, "utf-8"));
-      // Reset daily P&L if it's a new day
-      const today = new Date().toDateString();
-      if (p.lastResetDate !== today) {
-        p.dailyPnl = 0;
-        p.lastResetDate = today;
-      }
-      return p;
-    } catch {
-      // fall through to create new
-    }
-  }
-
-  const portfolio: Portfolio = {
-    bankroll: STARTING_BANKROLL,
-    startingBankroll: STARTING_BANKROLL,
-    cashAvailable: STARTING_BANKROLL,
-    positions: [],
-    dailyPnl: 0,
-    dailyLossLimit: STARTING_BANKROLL * MAX_DAILY_LOSS_PCT,
-    totalPnl: 0,
-    winCount: 0,
-    lossCount: 0,
-    lastResetDate: new Date().toDateString(),
-  };
-
-  savePortfolio(portfolio);
-  return portfolio;
+function log(msg: string, level: "INFO" | "WARN" | "ERROR" = "INFO"): void {
+  const ts = new Date().toLocaleTimeString();
+  const prefix = level === "ERROR" ? "[ERR] " : level === "WARN" ? "[WARN]" : "[OK]  ";
+  console.log(`  [${ts}] ${prefix} ${msg}`);
 }
 
-function savePortfolio(portfolio: Portfolio): void {
-  fs.writeFileSync(PORTFOLIO_FILE, JSON.stringify(portfolio, null, 2));
-}
-
-// ─────────────────────────────────────────────────
-// KILL SWITCH
-// ─────────────────────────────────────────────────
-
-function isKillSwitchActive(): boolean {
-  return fs.existsSync(KILL_SWITCH_FILE);
-}
-
-// ─────────────────────────────────────────────────
-// KELLY CRITERION
-// ─────────────────────────────────────────────────
-
-function kellyPositionSize(
-  probability: number,
-  marketPrice: number,
-  bankroll: number,
-  action: "BUY_YES" | "BUY_NO"
-): number {
-  const p = probability / 100;
-  const q = 1 - p;
-
-  // For BUY_YES: odds = (1 - price) / price
-  // For BUY_NO:  odds = price / (1 - price)
-  const b =
-    action === "BUY_YES"
-      ? (1 - marketPrice) / marketPrice
-      : marketPrice / (1 - marketPrice);
-
-  // Kelly formula: f* = (bp - q) / b
-  const kelly = (b * p - q) / b;
-
-  if (kelly <= 0) return 0;
-
-  // Apply fractional Kelly and cap at max position size
-  const fractional = kelly * KELLY_FRACTION;
-  const maxAllowed = bankroll * MAX_POSITION_PCT;
-  const kellySized = bankroll * fractional;
-
-  return Math.min(kellySized, maxAllowed);
-}
-
-// ─────────────────────────────────────────────────
-// RISK CHECKS
-// ─────────────────────────────────────────────────
-
-function runRiskChecks(
-  signal: TradeSignal,
-  portfolio: Portfolio
-): RiskCheckResult {
-  const reasons: string[] = [];
-  let passed = true;
-
-  // 1. Kill switch
-  if (isKillSwitchActive()) {
-    return { passed: false, reasons: ["KILL SWITCH ACTIVE — trading halted"], approvedSize: 0 };
-  }
-
-  // 2. Edge check
-  const edgePct = Math.abs(signal.edge);
-  if (edgePct < MIN_EDGE * 100) {
-    passed = false;
-    reasons.push(`Edge ${edgePct.toFixed(1)}% below minimum ${MIN_EDGE * 100}%`);
-  }
-
-  // 3. Daily loss limit
-  if (portfolio.dailyPnl < -portfolio.dailyLossLimit) {
-    passed = false;
-    reasons.push(`Daily loss limit reached ($${Math.abs(portfolio.dailyPnl).toFixed(2)})`);
-  }
-
-  // 4. Max drawdown check
-  const drawdown = (portfolio.startingBankroll - portfolio.bankroll) / portfolio.startingBankroll;
-  if (drawdown > MAX_DRAWDOWN_PCT) {
-    passed = false;
-    reasons.push(`Max drawdown exceeded (${(drawdown * 100).toFixed(1)}%)`);
-  }
-
-  // 5. Concurrent position limit
-  const openPositions = portfolio.positions.filter((p) => p.status === "OPEN");
-  if (openPositions.length >= MAX_CONCURRENT) {
-    passed = false;
-    reasons.push(`Max concurrent positions reached (${MAX_CONCURRENT})`);
-  }
-
-  // 6. Duplicate position check
-  const alreadyOpen = openPositions.find((p) => p.ticker === signal.ticker);
-  if (alreadyOpen) {
-    passed = false;
-    reasons.push(`Already have open position in ${signal.ticker}`);
-  }
-
-  // 7. Sufficient cash
-  const minBet = 1;
-  if (portfolio.cashAvailable < minBet) {
-    passed = false;
-    reasons.push(`Insufficient cash ($${portfolio.cashAvailable.toFixed(2)})`);
-  }
-
-  // 8. Value at Risk (95% confidence)
-  // VaR = position size * (1 - confidence)
-  const posSize = kellyPositionSize(
-    signal.ensembleProbability,
-    signal.marketPrice,
-    portfolio.bankroll,
-    signal.action as "BUY_YES" | "BUY_NO"
-  );
-  const var95 = posSize * (1 - signal.confidence);
-  const dailyVarLimit = portfolio.bankroll * 0.05; // 5% daily VaR limit
-  if (var95 > dailyVarLimit) {
-    reasons.push(`High VaR warning: $${var95.toFixed(2)} (limit $${dailyVarLimit.toFixed(2)})`);
-    // Warning only, don't block
-  }
-
-  // Calculate approved size
-  const approvedSize = passed
-    ? Math.min(
-        posSize,
-        portfolio.cashAvailable,
-        portfolio.bankroll * MAX_POSITION_PCT
-      )
-    : 0;
-
-  return { passed, reasons, approvedSize };
-}
-
-// ─────────────────────────────────────────────────
-// KALSHI AUTH (for live trading)
-// ─────────────────────────────────────────────────
-
-function buildAuthHeaders(method: string, urlPath: string): Record<string, string> {
-  const keyPath = path.resolve(PRIVATE_KEY_PATH);
-  const keyData = fs.readFileSync(keyPath, "utf-8");
-  const privateKey = crypto.createPrivateKey(keyData);
-
-  const timestampMs = Date.now().toString();
-  const message = timestampMs + method.toUpperCase() + urlPath;
-
-  const signature = crypto.sign(
-    "SHA256",
-    Buffer.from(message, "utf-8"),
-    {
-      key: privateKey,
-      padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
-      saltLength: crypto.constants.RSA_PSS_SALTLEN_DIGEST,
-    }
-  );
-
-  return {
-    "KALSHI-ACCESS-KEY": KEY_ID,
-    "KALSHI-ACCESS-TIMESTAMP": timestampMs,
-    "KALSHI-ACCESS-SIGNATURE": signature.toString("base64"),
-    "Content-Type": "application/json",
-  };
-}
-
-function httpsRequest(
-  hostname: string,
-  path: string,
-  method: string,
-  headers: Record<string, string>,
-  body?: string
-): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname,
-      path,
-      method,
-      headers: body
-        ? { ...headers, "Content-Length": Buffer.byteLength(body) }
-        : headers,
-      timeout: 10000,
-    };
-    const req = https.request(options, (res) => {
-      let data = "";
-      res.on("data", (c) => (data += c));
-      res.on("end", () => resolve(data));
-    });
-    req.on("error", reject);
-    req.on("timeout", () => { req.destroy(); reject(new Error("Timeout")); });
-    if (body) req.write(body);
-    req.end();
-  });
-}
-
-async function getCurrentPrice(ticker: string): Promise<number | null> {
+function loadJson<T>(file: string, fallback: T): T {
   try {
-    const urlPath = `/trade-api/v2/markets/${ticker}`;
-    const hostname = BASE_URL.replace("https://", "").split("/")[0];
-    const raw = await httpsRequest(hostname, urlPath, "GET", {});
-    const data = JSON.parse(raw);
-    const price = data.market?.last_price_dollars ?? data.market?.yes_bid_dollars;
-    return price ? parseFloat(price) : null;
+    if (fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, "utf-8"));
+  } catch {}
+  return fallback;
+}
+
+function saveJson(file: string, data: unknown): void {
+  fs.writeFileSync(file, JSON.stringify(data, null, 2));
+}
+
+// ─────────────────────────────────────────────────
+// TELEGRAM
+// ─────────────────────────────────────────────────
+
+async function sendTelegram(text: string): Promise<void> {
+  if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) return;
+  try {
+    await axios.post(
+      `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`,
+      { chat_id: TELEGRAM_CHAT_ID, text, parse_mode: "HTML" },
+      { timeout: 8000 }
+    );
+  } catch {
+    // Non-critical — swallow silently
+  }
+}
+
+// ─────────────────────────────────────────────────
+// CLOB API AUTH (L1 — EOA personal sign)
+// ─────────────────────────────────────────────────
+
+async function buildAuthHeaders(wallet: ethers.Wallet): Promise<Record<string, string>> {
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const signature = await wallet.signMessage(timestamp);
+  return {
+    "POLY_ADDRESS":   wallet.address,
+    "POLY_SIGNATURE": signature,
+    "POLY_TIMESTAMP": timestamp,
+    "POLY_NONCE":     "",
+    "Content-Type":   "application/json",
+  };
+}
+
+// ─────────────────────────────────────────────────
+// CLOB API: BEST PRICE
+// ─────────────────────────────────────────────────
+
+async function getBestPrice(tokenId: string, side: "buy" | "sell"): Promise<number | null> {
+  try {
+    const res = await axios.get(`${CLOB_BASE_URL}/price`, {
+      params: { token_id: tokenId, side },
+      timeout: 8000,
+    });
+    const price = parseFloat(res.data?.price ?? "0");
+    return Number.isFinite(price) && price > 0 ? price : null;
   } catch {
     return null;
   }
 }
 
 // ─────────────────────────────────────────────────
-// PAPER TRADE EXECUTION
+// EIP-712 ORDER SIGNING
 // ─────────────────────────────────────────────────
 
-function executePaperTrade(
-  signal: TradeSignal,
-  approvedSize: number,
-  portfolio: Portfolio
-): ExecutionResult {
-  const price = signal.marketPrice;
-  const contracts = Math.floor(approvedSize / price);
+const ORDER_DOMAIN = {
+  name:              "Polymarket CTF Exchange",
+  version:           "1",
+  chainId:           CHAIN_ID,
+  verifyingContract: CTF_EXCHANGE,
+} as const;
 
-  if (contracts < 1) {
-    return {
-      success: false,
-      ticker: signal.ticker,
-      action: signal.action,
-      contracts: 0,
-      price,
-      costBasis: 0,
-      paper: true,
-      error: "Position size too small for even 1 contract",
-    };
-  }
+const ORDER_TYPES = {
+  Order: [
+    { name: "salt",          type: "uint256" },
+    { name: "maker",         type: "address" },
+    { name: "signer",        type: "address" },
+    { name: "taker",         type: "address" },
+    { name: "tokenId",       type: "uint256" },
+    { name: "makerAmount",   type: "uint256" },
+    { name: "takerAmount",   type: "uint256" },
+    { name: "expiration",    type: "uint256" },
+    { name: "nonce",         type: "uint256" },
+    { name: "feeRateBps",    type: "uint256" },
+    { name: "side",          type: "uint8"   },
+    { name: "signatureType", type: "uint8"   },
+  ],
+};
 
-  const costBasis = contracts * price;
+interface ClobOrderStruct {
+  salt:          bigint;
+  maker:         string;
+  signer:        string;
+  taker:         string;
+  tokenId:       bigint;
+  makerAmount:   bigint;
+  takerAmount:   bigint;
+  expiration:    bigint;
+  nonce:         bigint;
+  feeRateBps:    bigint;
+  side:          number;
+  signatureType: number;
+}
 
-  // Add position to portfolio
-  const position: Position = {
-    ticker: signal.ticker,
-    title: signal.title,
-    action: signal.action as "BUY_YES" | "BUY_NO",
-    contracts,
-    entryPrice: price,
-    costBasis,
-    openedAt: new Date().toISOString(),
-    status: "OPEN",
-  };
-
-  portfolio.positions.push(position);
-  portfolio.cashAvailable -= costBasis;
-  savePortfolio(portfolio);
+function buildOrder(
+  walletAddress: string,
+  tokenId: string,
+  sizeUsdc: number,
+  price: number,
+  side: 0 | 1  // 0 = BUY, 1 = SELL
+): ClobOrderStruct {
+  // BUY: makerAmount = USDC spent, takerAmount = tokens received
+  const makerAmount = BigInt(Math.round(sizeUsdc * 10 ** USDC_DECIMALS));
+  const takerAmount = price > 0
+    ? BigInt(Math.round((sizeUsdc / price) * 10 ** USDC_DECIMALS))
+    : BigInt(0);
 
   return {
-    success: true,
-    ticker: signal.ticker,
-    action: signal.action,
-    contracts,
-    price,
-    costBasis,
-    paper: true,
-    orderId: `PAPER-${Date.now()}`,
+    salt:          BigInt("0x" + crypto.randomBytes(32).toString("hex")) >> BigInt(1),
+    maker:         walletAddress,
+    signer:        walletAddress,
+    taker:         "0x0000000000000000000000000000000000000000",
+    tokenId:       BigInt(tokenId),
+    makerAmount,
+    takerAmount,
+    expiration:    BigInt(0),  // 0 = FOK (no expiry, cancel if not filled)
+    nonce:         BigInt(0),
+    feeRateBps:    BigInt(0),
+    side,
+    signatureType: 0,          // 0 = EOA
   };
 }
 
-// ─────────────────────────────────────────────────
-// LIVE TRADE EXECUTION
-// ─────────────────────────────────────────────────
-
-async function executeLiveTrade(
-  signal: TradeSignal,
-  approvedSize: number
-): Promise<ExecutionResult> {
-  const price = signal.marketPrice;
-  const contracts = Math.floor(approvedSize / price);
-
-  if (contracts < 1) {
-    return {
-      success: false,
-      ticker: signal.ticker,
-      action: signal.action,
-      contracts: 0,
-      price,
-      costBasis: 0,
-      paper: false,
-      error: "Too small for 1 contract",
-    };
-  }
-
-  // Slippage check — get current price before placing
-  const currentPrice = await getCurrentPrice(signal.ticker);
-  if (currentPrice !== null) {
-    const slippage = Math.abs(currentPrice - price) / price;
-    if (slippage > MAX_SLIPPAGE) {
-      return {
-        success: false,
-        ticker: signal.ticker,
-        action: signal.action,
-        contracts,
-        price,
-        costBasis: 0,
-        paper: false,
-        error: `Price slipped ${(slippage * 100).toFixed(1)}% — aborting`,
-      };
-    }
-  }
-
-  // Place limit order via Kalshi API
-  const side = signal.action === "BUY_YES" ? "yes" : "no";
-  const urlPath = "/trade-api/v2/portfolio/orders";
-  const hostname = BASE_URL.replace("https://", "").split("/")[0];
-
-  const orderBody = JSON.stringify({
-    ticker: signal.ticker,
-    client_order_id: crypto.randomUUID(),
-    type: "limit",
-    action: "buy",
-    side,
-    count: contracts,
-    limit_price: Math.round(price * 100), // cents
-    time_in_force: "ioc", // immediate or cancel
-  });
-
+async function signAndSubmitOrder(
+  wallet: ethers.Wallet,
+  tokenId: string,
+  sizeUsdc: number,
+  price: number
+): Promise<OrderResult> {
   try {
-    const headers = buildAuthHeaders("POST", urlPath);
-    const raw = await httpsRequest(hostname, urlPath, "POST", headers, orderBody);
-    const response = JSON.parse(raw);
+    const order = buildOrder(wallet.address, tokenId, sizeUsdc, price, 0);
 
-    if (response.order) {
+    // ethers v6: signTypedData | ethers v5: _signTypedData
+    const signature = await (wallet as any).signTypedData
+      ? wallet.signTypedData(ORDER_DOMAIN, ORDER_TYPES, order)
+      : (wallet as any)._signTypedData(ORDER_DOMAIN, ORDER_TYPES, order);
+
+    const authHeaders = await buildAuthHeaders(wallet);
+
+    const body = {
+      order: {
+        salt:          order.salt.toString(),
+        maker:         order.maker,
+        signer:        order.signer,
+        taker:         order.taker,
+        tokenId:       order.tokenId.toString(),
+        makerAmount:   order.makerAmount.toString(),
+        takerAmount:   order.takerAmount.toString(),
+        expiration:    order.expiration.toString(),
+        nonce:         order.nonce.toString(),
+        feeRateBps:    order.feeRateBps.toString(),
+        side:          order.side,
+        signatureType: order.signatureType,
+      },
+      signature,
+      owner:     wallet.address,
+      orderType: "FOK",
+    };
+
+    const res = await axios.post(`${CLOB_BASE_URL}/order`, body, {
+      headers: authHeaders,
+      timeout: 15000,
+    });
+
+    const data = res.data;
+    if (data.success !== false && (data.orderID ?? data.order_id ?? data.transactionHash)) {
       return {
         success: true,
-        ticker: signal.ticker,
-        action: signal.action,
-        contracts,
-        price,
-        costBasis: contracts * price,
-        paper: false,
-        orderId: response.order.order_id,
-      };
-    } else {
-      return {
-        success: false,
-        ticker: signal.ticker,
-        action: signal.action,
-        contracts,
-        price,
-        costBasis: 0,
-        paper: false,
-        error: JSON.stringify(response),
+        orderId: data.orderID ?? data.order_id,
+        txHash:  data.transactionHash,
       };
     }
-  } catch (e) {
-    return {
-      success: false,
-      ticker: signal.ticker,
-      action: signal.action,
-      contracts,
-      price,
-      costBasis: 0,
-      paper: false,
-      error: (e as Error).message,
-    };
+
+    return { success: false, error: JSON.stringify(data) };
+  } catch (e: any) {
+    const detail = e.response?.data ? JSON.stringify(e.response.data) : e.message;
+    return { success: false, error: detail };
   }
 }
 
 // ─────────────────────────────────────────────────
-// DISPLAY
+// POSITION & HISTORY HELPERS
 // ─────────────────────────────────────────────────
 
-function printPortfolioSummary(portfolio: Portfolio): void {
-  const openPositions = portfolio.positions.filter((p) => p.status === "OPEN");
-  const totalTrades = portfolio.winCount + portfolio.lossCount;
-  const winRate = totalTrades > 0 ? (portfolio.winCount / totalTrades) * 100 : 0;
-  const roi = ((portfolio.bankroll - portfolio.startingBankroll) / portfolio.startingBankroll) * 100;
+function loadOpenPositions(): OpenPosition[] {
+  return loadJson<OpenPosition[]>(OPEN_POSITIONS_FILE, []);
+}
 
-  console.log(`\n${"═".repeat(65)}`);
-  console.log(`  PORTFOLIO SUMMARY  ${PAPER_TRADE ? "[PAPER TRADING]" : "[LIVE TRADING]"}`);
-  console.log(`${"═".repeat(65)}`);
-  console.log(`  Bankroll:      $${portfolio.bankroll.toFixed(2)}  (started: $${portfolio.startingBankroll.toFixed(2)})`);
-  console.log(`  Cash:          $${portfolio.cashAvailable.toFixed(2)}`);
-  console.log(`  Total P&L:     ${portfolio.totalPnl >= 0 ? "+" : ""}$${portfolio.totalPnl.toFixed(2)}  (${roi >= 0 ? "+" : ""}${roi.toFixed(1)}% ROI)`);
-  console.log(`  Daily P&L:     ${portfolio.dailyPnl >= 0 ? "+" : ""}$${portfolio.dailyPnl.toFixed(2)}`);
-  console.log(`  Win/Loss:      ${portfolio.winCount}W / ${portfolio.lossCount}L  (${winRate.toFixed(0)}% win rate)`);
-  console.log(`  Open positions: ${openPositions.length}/${MAX_CONCURRENT}`);
+function isAlreadyTraded(positions: OpenPosition[], conditionId: string): boolean {
+  return positions.some((p) => p.conditionId === conditionId);
+}
 
-  if (openPositions.length > 0) {
-    console.log(`\n  OPEN POSITIONS:`);
-    for (const pos of openPositions) {
-      console.log(
-        `    ${pos.action === "BUY_YES" ? "✅" : "🔴"} ${pos.ticker.slice(0, 35)} | ${pos.contracts} contracts @ $${pos.entryPrice.toFixed(4)} | cost: $${pos.costBasis.toFixed(2)}`
-      );
-    }
-  }
-  console.log(`${"═".repeat(65)}\n`);
+function appendTradeRecord(record: TradeRecord): void {
+  const history = loadJson<TradeRecord[]>(TRADE_HISTORY_FILE, []);
+  history.push(record);
+  saveJson(TRADE_HISTORY_FILE, history);
 }
 
 // ─────────────────────────────────────────────────
@@ -544,129 +317,200 @@ function printPortfolioSummary(portfolio: Portfolio): void {
 // ─────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  console.log(`\n${"═".repeat(65)}`);
-  console.log(`  STEP 4: EXECUTOR`);
-  console.log(`  Risk management + Trade execution`);
-  console.log(`  Mode: ${PAPER_TRADE ? "📝 PAPER TRADING (safe)" : "💰 LIVE TRADING (real money)"}`);
-  console.log(`${"═".repeat(65)}`);
+  console.log("\n" + "═".repeat(65));
+  console.log("  STEP 5: EXECUTOR");
+  console.log(`  Mode: ${PAPER_TRADING ? "PAPER TRADING (no real orders)" : "LIVE TRADING (real money)"}`);
+  console.log("═".repeat(65) + "\n");
 
-  // Kill switch check
-  if (isKillSwitchActive()) {
-    console.log(`\n  🛑 KILL SWITCH ACTIVE`);
-    console.log(`  Delete the STOP file to resume trading.`);
+  if (fs.existsSync(KILL_SWITCH_FILE)) {
+    log("Kill switch active — execution halted", "WARN");
     process.exit(0);
   }
 
-  // Load signal results from Step 3
-  if (!fs.existsSync("signal_results.json")) {
-    console.error("[ERROR] signal_results.json not found. Run npm run predict first.");
+  // ── Wallet setup (live mode only) ──────────────
+  let wallet: ethers.Wallet | null = null;
+  if (!PAPER_TRADING) {
+    if (!POLYGON_PRIVATE_KEY) {
+      log("POLYGON_PRIVATE_KEY not set in .env — cannot run live", "ERROR");
+      process.exit(1);
+    }
+    wallet = new ethers.Wallet(POLYGON_PRIVATE_KEY);
+    log(`Wallet: ${wallet.address}`);
+  }
+
+  // ── Load signals ───────────────────────────────
+  const signalFile = fs.existsSync(PREDICTOR_RESULTS_FILE)
+    ? PREDICTOR_RESULTS_FILE
+    : "signal_results.json";
+
+  if (!fs.existsSync(signalFile)) {
+    log(`No signal file found (expected ${PREDICTOR_RESULTS_FILE})`, "ERROR");
     process.exit(1);
   }
 
-  const signalData = JSON.parse(fs.readFileSync("signal_results.json", "utf-8"));
-  const signals: TradeSignal[] = (signalData.signals ?? []).filter(
-    (s: TradeSignal) => s.action !== "PASS"
+  const raw = JSON.parse(fs.readFileSync(signalFile, "utf-8"));
+  const signals: TradeSignal[] = (raw.signals ?? []).filter(
+    (s: TradeSignal) => s.action === "BUY_YES" || s.action === "BUY_NO"
   );
 
   if (signals.length === 0) {
-    console.log("\n  No actionable signals found. Run the full pipeline first:");
-    console.log("    npm run scan");
-    console.log("    npm run research");
-    console.log("    npm run predict\n");
+    log("No actionable signals (BUY_YES / BUY_NO) in signal file");
     process.exit(0);
   }
 
-  console.log(`\n  Found ${signals.length} actionable signal(s) to evaluate...\n`);
+  log(`${signals.length} actionable signal(s) to evaluate`);
 
-  const portfolio = loadPortfolio();
+  const openPositions = loadOpenPositions();
+  log(`Open positions: ${openPositions.length} / ${MAX_OPEN_POSITIONS}`);
 
-  // Process each signal
   let executed = 0;
-  let blocked = 0;
+  let skipped  = 0;
 
   for (const signal of signals) {
-    console.log(`\n  ── Signal: ${signal.action} ${signal.ticker.slice(0, 40)}`);
-    console.log(`     Edge: ${signal.edge > 0 ? "+" : ""}${signal.edge.toFixed(1)}% | Confidence: ${(signal.confidence * 100).toFixed(0)}%`);
+    const label = (signal.question ?? signal.conditionId).slice(0, 55);
+    console.log(`\n  ── ${signal.action} | ${label}`);
+    console.log(
+      `     Edge: ${signal.edge > 0 ? "+" : ""}${signal.edge.toFixed(1)}%` +
+      `  Confidence: ${(signal.confidence * 100).toFixed(0)}%` +
+      `  Size: $${signal.suggestedPositionSize}`
+    );
 
-    // Run risk checks
-    const riskResult = runRiskChecks(signal, portfolio);
+    if (fs.existsSync(KILL_SWITCH_FILE)) {
+      log("Kill switch triggered mid-run — stopping", "WARN");
+      break;
+    }
 
-    if (!riskResult.passed) {
-      blocked++;
-      console.log(`  ❌ BLOCKED by risk checks:`);
-      for (const reason of riskResult.reasons) {
-        console.log(`     • ${reason}`);
-      }
+    if (openPositions.length >= MAX_OPEN_POSITIONS) {
+      log(`Max open positions (${MAX_OPEN_POSITIONS}) reached — skipping`, "WARN");
+      skipped++;
       continue;
     }
 
-    // Show approved size
-    const approvedSize = Math.max(1, Math.round(riskResult.approvedSize * 100) / 100);
-    console.log(`  ✓ Risk checks passed`);
-    console.log(`  ✓ Approved position: $${approvedSize.toFixed(2)}`);
+    if (isAlreadyTraded(openPositions, signal.conditionId)) {
+      log(`Already have a position in conditionId ${signal.conditionId} — skipping`);
+      skipped++;
+      continue;
+    }
 
-    if (riskResult.reasons.length > 0) {
-      console.log(`  ⚠ Warnings:`);
-      for (const reason of riskResult.reasons) {
-        console.log(`    • ${reason}`);
+    if (!Array.isArray(signal.clobTokenIds) || signal.clobTokenIds.length < 2) {
+      log(`Missing clobTokenIds on signal for ${signal.conditionId} — skipping`, "WARN");
+      skipped++;
+      continue;
+    }
+
+    const tokenId  = signal.action === "BUY_YES" ? signal.clobTokenIds[0] : signal.clobTokenIds[1];
+    const sizeUsdc = signal.suggestedPositionSize;
+
+    // ── Determine fill price ───────────────────────
+    let price: number;
+    if (PAPER_TRADING) {
+      price = signal.marketPrice;
+    } else {
+      const fetched = await getBestPrice(tokenId, "buy");
+      if (fetched === null) {
+        log(`Could not fetch price for token ${tokenId.slice(0, 16)}... — skipping`, "WARN");
+        skipped++;
+        continue;
+      }
+      price = fetched;
+    }
+
+    log(`  tokenId: ${tokenId.slice(0, 18)}...  price: $${price.toFixed(4)}  size: $${sizeUsdc}`);
+
+    const action = signal.action as "BUY_YES" | "BUY_NO";
+
+    const position: OpenPosition = {
+      conditionId: signal.conditionId,
+      question:    signal.question,
+      action,
+      tokenId,
+      price,
+      sizeUsdc,
+      openedAt:    new Date().toISOString(),
+      paper:       PAPER_TRADING,
+    };
+
+    const record: TradeRecord = {
+      conditionId: signal.conditionId,
+      question:    signal.question,
+      action,
+      price,
+      size:        sizeUsdc,
+      timestamp:   new Date().toISOString(),
+      paper:       PAPER_TRADING,
+    };
+
+    if (PAPER_TRADING) {
+      openPositions.push(position);
+      appendTradeRecord(record);
+      executed++;
+
+      log(`PAPER TRADE logged: ${signal.action} $${sizeUsdc} @ $${price.toFixed(4)}`);
+      await sendTelegram(
+        `📝 <b>PAPER TRADE</b>\n` +
+        `${signal.action === "BUY_YES" ? "🟢" : "🔴"} <b>${signal.action}</b>\n` +
+        `📊 ${label}\n` +
+        `💵 Size: $${sizeUsdc.toFixed(2)}\n` +
+        `📈 Price: $${price.toFixed(4)}\n` +
+        `🎯 Edge: ${signal.edge > 0 ? "+" : ""}${signal.edge.toFixed(1)}%  ` +
+        `Conf: ${(signal.confidence * 100).toFixed(0)}%`
+      );
+    } else {
+      log(`Placing LIVE FOK order...`);
+      const result = await signAndSubmitOrder(wallet!, tokenId, sizeUsdc, price);
+
+      if (result.success) {
+        position.orderId = result.orderId;
+        record.txHash    = result.txHash ?? result.orderId;
+        openPositions.push(position);
+        appendTradeRecord(record);
+        executed++;
+
+        log(`LIVE order filled: orderId=${result.orderId}  tx=${result.txHash ?? "—"}`);
+        await sendTelegram(
+          `💰 <b>LIVE TRADE EXECUTED</b>\n` +
+          `${signal.action === "BUY_YES" ? "🟢" : "🔴"} <b>${signal.action}</b>\n` +
+          `📊 ${label}\n` +
+          `💵 Size: $${sizeUsdc.toFixed(2)}\n` +
+          `📈 Price: $${price.toFixed(4)}\n` +
+          `🎯 Edge: ${signal.edge > 0 ? "+" : ""}${signal.edge.toFixed(1)}%\n` +
+          `🔗 Order: ${result.orderId ?? "—"}`
+        );
+      } else {
+        skipped++;
+        log(`Order failed: ${result.error}`, "ERROR");
+        await sendTelegram(
+          `❌ <b>ORDER FAILED</b>\n` +
+          `${signal.action} — ${label}\n` +
+          `Error: ${(result.error ?? "unknown").slice(0, 120)}`
+        );
       }
     }
-
-    // Execute
-    let result: ExecutionResult;
-
-    if (PAPER_TRADE) {
-      result = executePaperTrade(signal, approvedSize, portfolio);
-    } else {
-      console.log(`\n  ⚠️  LIVE TRADE — placing real order on Kalshi...`);
-      result = await executeLiveTrade(signal, approvedSize);
-    }
-
-    if (result.success) {
-      executed++;
-      console.log(`\n  ${PAPER_TRADE ? "📝" : "💰"} ${result.paper ? "PAPER" : "LIVE"} TRADE EXECUTED:`);
-      console.log(`     Ticker:    ${result.ticker.slice(0, 45)}`);
-      console.log(`     Action:    ${result.action}`);
-      console.log(`     Contracts: ${result.contracts}`);
-      console.log(`     Price:     $${result.price.toFixed(4)}`);
-      console.log(`     Cost:      $${result.costBasis.toFixed(2)}`);
-      console.log(`     Order ID:  ${result.orderId}`);
-    } else {
-      blocked++;
-      console.log(`  ❌ Execution failed: ${result.error}`);
-    }
   }
 
-  // Summary
-  console.log(`\n${"─".repeat(65)}`);
-  console.log(`  Executed: ${executed} | Blocked: ${blocked}`);
+  // ── Persist & summarize ────────────────────────
+  saveJson(OPEN_POSITIONS_FILE, openPositions);
 
-  // Portfolio summary
-  printPortfolioSummary(portfolio);
-
-  // Save execution log
-  const log = {
-    timestamp: new Date().toISOString(),
-    mode: PAPER_TRADE ? "paper" : "live",
+  const execLog = loadJson<any[]>("execution_log.json", []);
+  execLog.push({
+    timestamp:        new Date().toISOString(),
+    mode:             PAPER_TRADING ? "paper" : "live",
     signalsEvaluated: signals.length,
     executed,
-    blocked,
-  };
+    skipped,
+    openPositions:    openPositions.length,
+  });
+  if (execLog.length > 500) execLog.splice(0, execLog.length - 500);
+  saveJson("execution_log.json", execLog);
 
-  const logPath = "execution_log.json";
-  let logs = [];
-  if (fs.existsSync(logPath)) {
-    try { logs = JSON.parse(fs.readFileSync(logPath, "utf-8")); } catch { logs = []; }
+  console.log("\n" + "═".repeat(65));
+  console.log(`  Executed: ${executed}  |  Skipped/Failed: ${skipped}`);
+  console.log(`  Open positions: ${openPositions.length} / ${MAX_OPEN_POSITIONS}`);
+  if (PAPER_TRADING) {
+    console.log("  (Paper mode — no real money spent)");
+    console.log("  Set PAPER_TRADING=false in .env to trade live");
   }
-  logs.push(log);
-  fs.writeFileSync(logPath, JSON.stringify(logs, null, 2));
-  console.log("  ✓ Execution log saved\n");
-
-  if (PAPER_TRADE) {
-    console.log("  📝 Running in PAPER MODE — no real money spent");
-    console.log("  To go live: add PAPER_TRADE=false to your .env file");
-    console.log("  (only after monitoring paper trades for a few days)\n");
-  }
+  console.log("═".repeat(65) + "\n");
 }
 
 main().catch((err) => {

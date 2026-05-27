@@ -11,8 +11,8 @@ import axios from "axios";
 // ─── CONFIG ────────────────────────────────────────────────
 const GAMMA_URL = "https://gamma-api.polymarket.com/markets";
 const MIN_LIQUIDITY = 1_000;
-const MIN_VOLUME_24H = 100;
-const MAX_DAYS_TO_EXPIRY = 14;
+const MIN_VOLUME_24H = 50;
+const MAX_DAYS_TO_EXPIRY = 30;
 const TOP_N = 20;
 
 const NOISE_KEYWORDS = [
@@ -79,7 +79,7 @@ function scoreMarket(m: RawMarket): number {
 }
 
 // ─── FETCH ─────────────────────────────────────────────────
-async function fetchMarkets(limit = 100): Promise<RawMarket[]> {
+async function fetchMarkets(limit = 500): Promise<RawMarket[]> {
   const resp = await axios.get<RawMarket[]>(GAMMA_URL, {
     params: { active: true, closed: false, limit },
     timeout: 15_000,
@@ -98,7 +98,7 @@ async function runScan(): Promise<ScoredMarket[]> {
   console.log(`${"═".repeat(60)}`);
 
   // 1. Fetch
-  const raw = await fetchMarkets(100);
+  const raw = await fetchMarkets(500);
   console.log(`  Fetched: ${raw.length} markets`);
 
   // 2. Filter

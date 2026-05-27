@@ -475,7 +475,7 @@ Get your key at: https://console.anthropic.com/settings/keys
   }
 
   // Research top markets (limit to top 10 to manage API costs)
-  const TOP_N = Math.min(10, markets.length);
+  const TOP_N = Math.min(7, markets.length);
   console.log(`\n  Researching top ${TOP_N} markets from last scan...`);
   console.log(`  Scan timestamp: ${scanData.timestamp}`);
 

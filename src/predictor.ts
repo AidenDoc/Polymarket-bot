@@ -1,7 +1,7 @@
 /**
  * ====================================================
  *  PREDICTION MARKET TRADING BOT — STEP 3: PREDICTOR
- *  Ensemble AI: Claude + Gemini + Groq + OpenAI
+ *  Ensemble AI: Claude + Gemini + Groq
  * ====================================================
  */
 
@@ -15,15 +15,13 @@ dotenv.config();
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY ?? "";
 const GEMINI_KEY = process.env.GEMINI_API_KEY ?? "";
 const GROQ_KEY = process.env.GROQ_API_KEY ?? "";
-const OPENAI_KEY = process.env.OPENAI_API_KEY ?? "";
 
 const MIN_EDGE = 0.02;          // Minimum 2% edge required
 const MIN_CONFIDENCE = 0.5;
 const MODEL_WEIGHTS = {
-  claude: 0.30,
-  gemini: 0.25,
-  groq: 0.20,
-  openai: 0.25,
+  claude: 0.35,
+  gemini: 0.35,
+  groq: 0.30,
 };
 
 // ─────────────────────────────────────────────────
@@ -183,26 +181,6 @@ async function callGroq(prompt: string): Promise<string> {
   return parsed.choices?.[0]?.message?.content ?? "";
 }
 
-async function callOpenAI(prompt: string): Promise<string> {
-  const body = JSON.stringify({
-    model: "gpt-4o-mini",
-    messages: [{ role: "user", content: prompt }],
-    max_tokens: 800,
-    temperature: 0.3,
-  });
-  const raw = await httpsPost(
-    "api.openai.com",
-    "/v1/chat/completions",
-    {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + OPENAI_KEY,
-    },
-    body
-  );
-  const parsed = JSON.parse(raw);
-  return parsed.choices?.[0]?.message?.content ?? "";
-}
-
 // ─────────────────────────────────────────────────
 // WHALE CONTEXT
 // ─────────────────────────────────────────────────
@@ -345,23 +323,6 @@ async function getGroqEstimate(brief: ResearchBrief, whale: WhaleContext): Promi
     };
   } catch {
     return { model: "groq", probability: brief.marketImpliedProbability, reasoning: "Failed", confidence: 0.1, bullCase: "Unknown", bearCase: "Unknown" };
-  }
-}
-
-async function getOpenAIEstimate(brief: ResearchBrief, whale: WhaleContext): Promise<ModelEstimate> {
-  try {
-    const response = await callOpenAI(buildPrompt(brief, "senior forecaster and probability calibration expert", whale));
-    const json = JSON.parse(response.match(/\{[\s\S]*\}/)?.[0] ?? "{}");
-    return {
-      model: "openai",
-      probability: Math.max(0, Math.min(100, json.probability ?? brief.marketImpliedProbability)),
-      reasoning: json.reasoning ?? "No reasoning",
-      confidence: Math.max(0, Math.min(1, json.confidence ?? 0.5)),
-      bullCase: json.bullCase ?? "Unknown",
-      bearCase: json.bearCase ?? "Unknown",
-    };
-  } catch {
-    return { model: "openai", probability: brief.marketImpliedProbability, reasoning: "Failed", confidence: 0.1, bullCase: "Unknown", bearCase: "Unknown" };
   }
 }
 
@@ -532,13 +493,12 @@ function printSignal(signal: TradeSignal, index: number): void {
 async function main(): Promise<void> {
   console.log("\n" + "═".repeat(65));
   console.log("  STEP 3: PREDICTOR");
-  console.log("  4-Model Ensemble: Claude (30%) + Gemini (25%) + Groq (20%) + OpenAI (25%)");
+  console.log("  3-Model Ensemble: Claude (35%) + Gemini (35%) + Groq (30%)");
   console.log("═".repeat(65));
 
   if (!ANTHROPIC_KEY) { console.error("[ERROR] Missing ANTHROPIC_API_KEY"); process.exit(1); }
   if (!GEMINI_KEY) { console.error("[ERROR] Missing GEMINI_API_KEY"); process.exit(1); }
   if (!GROQ_KEY) { console.error("[ERROR] Missing GROQ_API_KEY"); process.exit(1); }
-  if (!OPENAI_KEY) { console.error("[ERROR] Missing OPENAI_API_KEY"); process.exit(1); }
 
   if (!fs.existsSync("research_results.json")) {
     console.error("[ERROR] research_results.json not found. Run npm run research first.");
@@ -569,21 +529,19 @@ async function main(): Promise<void> {
     const whaleTag = whale.netBias !== "NONE" ? " 🐳" : "";
     console.log("  [" + (i + 1) + "/" + briefs.length + "] " + brief.question.slice(0, 45) + "..." + whaleTag);
 
-    const [claudeEst, geminiEst, groqEst, openaiEst] = await Promise.all([
+    const [claudeEst, geminiEst, groqEst] = await Promise.all([
       getClaudeEstimate(brief, whale),
       getGeminiEstimate(brief, whale),
       getGroqEstimate(brief, whale),
-      getOpenAIEstimate(brief, whale),
     ]);
 
     console.log(
       "    Claude: " + claudeEst.probability.toFixed(1) +
       "%  Gemini: " + geminiEst.probability.toFixed(1) +
-      "%  Groq: " + groqEst.probability.toFixed(1) +
-      "%  OpenAI: " + openaiEst.probability.toFixed(1) + "%"
+      "%  Groq: " + groqEst.probability.toFixed(1) + "%"
     );
 
-    const signal = generateSignal(brief, [claudeEst, geminiEst, groqEst, openaiEst], whale);
+    const signal = generateSignal(brief, [claudeEst, geminiEst, groqEst], whale);
     signals.push(signal);
     updateCalibrationLog(signal);
 

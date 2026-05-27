@@ -16,9 +16,9 @@ const MAX_DAYS_TO_EXPIRY = 90;
 const TOP_N = 20;
 
 const NOISE_KEYWORDS = [
-  "up or down", "dota", "nba", "nfl", "mlb", "nhl",
-  "esport", "gaming", "iem", "cologne", "billboard",
-  "netflix", "post from", "tweets from",
+  "up or down", "bitcoin up", "ethereum up", "15 min", "5 min", "1 hour",
+  "iem", "cologne", "billboard", "netflix", "post from", "tweets from",
+  "how many", "number of",
 ];
 
 // ─── TYPES ─────────────────────────────────────────────────

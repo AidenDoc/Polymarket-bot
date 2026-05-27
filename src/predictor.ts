@@ -15,6 +15,7 @@ dotenv.config();
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY ?? "";
 const GEMINI_KEY = process.env.GEMINI_API_KEY ?? "";
 const GROQ_KEY = process.env.GROQ_API_KEY ?? "";
+const BANKROLL = parseFloat(process.env.STARTING_BANKROLL ?? "1000");
 
 const MIN_EDGE = 0.02;          // Minimum 2% edge required
 const MIN_CONFIDENCE = 0.5;
@@ -365,11 +366,12 @@ function computeMispricingScore(modelProb: number, marketProb: number, estimates
 }
 
 function suggestPositionSize(edge: number, confidence: number, volume24hr: number, whaleBacked: boolean): number {
+  const maxSize     = BANKROLL * 0.10;
   const kelliFraction = Math.max(0, edge * confidence * 0.25);
-  const baseSize = kelliFraction * 100;
+  const baseSize    = kelliFraction * BANKROLL;
   const liquidityAdjusted = Math.min(baseSize, volume24hr * 0.01);
-  const rawSize = Math.min(50, Math.max(1, Math.round(liquidityAdjusted)));
-  return whaleBacked ? Math.min(50, Math.round(rawSize * 1.5)) : rawSize;
+  const rawSize     = Math.min(maxSize, Math.max(1, Math.round(liquidityAdjusted)));
+  return whaleBacked ? Math.min(BANKROLL * 0.15, Math.round(rawSize * 1.5)) : rawSize;
 }
 
 function generateSignal(brief: ResearchBrief, estimates: ModelEstimate[], whale: WhaleContext): TradeSignal {

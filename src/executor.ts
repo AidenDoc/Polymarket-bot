@@ -401,6 +401,12 @@ async function main(): Promise<void> {
     const tokenId  = signal.action === "BUY_YES" ? signal.clobTokenIds[0] : signal.clobTokenIds[1];
     const sizeUsdc = signal.suggestedPositionSize;
 
+    if (sizeUsdc < 1) {
+      log(`Size $${sizeUsdc} below Polymarket minimum ($1) — skipping`, "WARN");
+      skipped++;
+      continue;
+    }
+
     // ── Determine fill price ───────────────────────
     let price: number;
     if (PAPER_TRADING) {

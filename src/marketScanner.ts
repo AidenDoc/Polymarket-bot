@@ -12,7 +12,7 @@ import axios from "axios";
 const GAMMA_URL = "https://gamma-api.polymarket.com/markets";
 const MIN_LIQUIDITY = 1_000;
 const MIN_VOLUME_24H = 100;
-const MAX_DAYS_TO_EXPIRY = 90;
+const MAX_DAYS_TO_EXPIRY = 7;
 const TOP_N = 20;
 
 const NOISE_KEYWORDS = [

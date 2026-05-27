@@ -18,7 +18,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const SCAN_INTERVAL_MINUTES = 15;
+const SCAN_INTERVAL_MINUTES = 60;
 const KILL_SWITCH_FILE = "STOP";
 const LOG_FILE = "bot_log.json";
 const PORT = 3001;

@@ -25,8 +25,8 @@ interface NewsItem {
 }
 
 interface MarketSentiment {
-  ticker: string;
-  title: string;
+  conditionId: string;
+  question: string;
   newsItems: NewsItem[];
   sentimentScore: number;
   keyTopics: string[];
@@ -171,14 +171,14 @@ async function main(): Promise<void> {
   const results: MarketSentiment[] = [];
 
   for (const brief of briefs) {
-    console.log(`  [${results.length + 1}/${briefs.length}] ${brief.ticker?.slice(0, 40)}...`);
+    console.log(`  [${results.length + 1}/${briefs.length}] ${brief.question?.slice(0, 40)}...`);
 
-    const newsItems = await fetchNewsForMarket(brief.title ?? "");
-    const { score, bullishSignals, bearishSignals, keyTopics } = analyzeSentiment(newsItems, brief.title ?? "");
+    const newsItems = await fetchNewsForMarket(brief.question ?? "");
+    const { score, bullishSignals, bearishSignals, keyTopics } = analyzeSentiment(newsItems, brief.question ?? "");
 
     results.push({
-      ticker: brief.ticker,
-      title: brief.title,
+      conditionId: brief.conditionId,
+      question: brief.question,
       newsItems,
       sentimentScore: score,
       keyTopics,
@@ -205,7 +205,7 @@ async function main(): Promise<void> {
 
   // Merge sentiment back into research results
   for (const brief of briefs) {
-    const sentiment = results.find(r => r.ticker === brief.ticker);
+    const sentiment = results.find(r => r.conditionId === brief.conditionId);
     if (sentiment) {
       brief.sentimentScore = sentiment.sentimentScore;
       brief.newsItems = [...(brief.newsItems ?? []), ...sentiment.newsItems].slice(0, 10);

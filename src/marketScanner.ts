@@ -12,8 +12,10 @@ import axios from "axios";
 const GAMMA_URL = "https://gamma-api.polymarket.com/markets";
 const MIN_LIQUIDITY = 500;
 const MIN_VOLUME_24H = 10;
-const MAX_DAYS_TO_EXPIRY = 60;
+const MAX_DAYS_TO_EXPIRY = 30;
 const TOP_N = 20;
+const WHALE_SCORE_BONUS  = 0.30;
+const WHALE_LOOKBACK_MS  = 24 * 60 * 60 * 1000;
 
 const NOISE_KEYWORDS = [
   "up or down", "bitcoin up", "ethereum up", "15 min", "5 min", "1 hour",
@@ -78,6 +80,23 @@ function scoreMarket(m: RawMarket): number {
   return volScore * 0.40 + liqScore * 0.35 + spreadScore * 0.25;
 }
 
+// ─── WHALE LOADER ──────────────────────────────────────────
+function loadWhaleConditionIds(): Set<string> {
+  const ids = new Set<string>();
+  try {
+    if (!fs.existsSync("whale_signals.json")) return ids;
+    const raw = JSON.parse(fs.readFileSync("whale_signals.json", "utf-8"));
+    const signals: any[] = Array.isArray(raw) ? raw : (raw.signals ?? []);
+    const cutoff = Date.now() - WHALE_LOOKBACK_MS;
+    for (const s of signals) {
+      if (s.conditionId && new Date(s.timestamp).getTime() >= cutoff) {
+        ids.add(s.conditionId);
+      }
+    }
+  } catch {}
+  return ids;
+}
+
 // ─── FETCH ─────────────────────────────────────────────────
 async function fetchMarkets(limit = 500): Promise<RawMarket[]> {
   const resp = await axios.get<RawMarket[]>(GAMMA_URL, {
@@ -101,6 +120,10 @@ async function runScan(): Promise<ScoredMarket[]> {
   const raw = await fetchMarkets(500);
   console.log(`  Fetched: ${raw.length} markets`);
 
+  // Load whale activity for score boosting
+  const whaleIds = loadWhaleConditionIds();
+  console.log(`  Whale-active markets (24h): ${whaleIds.size}`);
+
   // 2. Filter
   const now = Date.now();
   const filtered = raw.filter((m) => {
@@ -115,19 +138,23 @@ async function runScan(): Promise<ScoredMarket[]> {
   });
   console.log(`  After filters: ${filtered.length} markets`);
 
-  // 3. Score + shape output
-  const scored: ScoredMarket[] = filtered.map((m) => ({
-    id: m.id,
-    conditionId: m.conditionId,
-    question: m.question,
-    outcomePrices: parseJsonArray(m.outcomePrices).map(Number),
-    volume24hr: m.volume24hr,
-    liquidityNum: m.liquidityNum,
-    spread: m.spread,
-    endDateIso: m.endDateIso,
-    clobTokenIds: parseJsonArray(m.clobTokenIds),
-    score: parseFloat(scoreMarket(m).toFixed(4)),
-  }));
+  // 3. Score + shape output (whale-active markets get +0.30 bonus)
+  const scored: ScoredMarket[] = filtered.map((m) => {
+    const base  = scoreMarket(m);
+    const bonus = whaleIds.has(m.conditionId) ? WHALE_SCORE_BONUS : 0;
+    return {
+      id: m.id,
+      conditionId: m.conditionId,
+      question: m.question,
+      outcomePrices: parseJsonArray(m.outcomePrices).map(Number),
+      volume24hr: m.volume24hr,
+      liquidityNum: m.liquidityNum,
+      spread: m.spread,
+      endDateIso: m.endDateIso,
+      clobTokenIds: parseJsonArray(m.clobTokenIds),
+      score: parseFloat((base + bonus).toFixed(4)),
+    };
+  });
 
   // 4. Sort descending by score, take top N
   scored.sort((a, b) => b.score - a.score);
@@ -144,7 +171,8 @@ async function runScan(): Promise<ScoredMarket[]> {
     const q = r.question.slice(0, 44).padEnd(44);
     const vol = `$${(r.volume24hr / 1000).toFixed(1)}k`.padStart(8);
     const liq = `$${(r.liquidityNum / 1000).toFixed(1)}k`.padStart(9);
-    console.log(`  ${String(i + 1).padEnd(3)} ${q} ${vol} ${liq} ${r.score.toFixed(3).padStart(6)}`);
+    const whale = whaleIds.has(r.conditionId) ? " 🐳" : "";
+    console.log(`  ${String(i + 1).padEnd(3)} ${q} ${vol} ${liq} ${r.score.toFixed(3).padStart(6)}${whale}`);
   }
   console.log(`${"═".repeat(80)}`);
   console.log(`  Top ${top.length} shown of ${scored.length} qualifying markets`);

@@ -18,9 +18,6 @@ jobs:
           script: |
             cd ~/Kalshi-bot
             git pull
+            npm install
             npm run build
-            pm2 delete bot dashboard guardian telegram 2>/dev/null; true
-            pm2 start dist/bot.js --name bot
-            pm2 start dist/dashboard.js --name dashboard
-            pm2 start dist/guardian.js --name guardian
-            pm2 start dist/telegram.js --name telegram
+            pm2 restart kalshi-bot

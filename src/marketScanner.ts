@@ -81,22 +81,23 @@ function scoreMarket(m: RawMarket): number {
 }
 
 // ─── WHALE LOADER ──────────────────────────────────────────
-function loadWhaleConditionIds(): Set<string> {
-  const ids = new Set<string>();
+function loadWhaleTitles(): Set<string> {
+  const titles = new Set<string>();
   try {
-    if (!fs.existsSync("whale_signals.json")) return ids;
+    if (!fs.existsSync("whale_signals.json")) return titles;
     const raw = JSON.parse(fs.readFileSync("whale_signals.json", "utf-8"));
     const signals: any[] = Array.isArray(raw) ? raw : (raw.signals ?? []);
     const cutoff = Date.now() - WHALE_LOOKBACK_MS;
     for (const s of signals) {
       // timestamp may be unix seconds or milliseconds — normalise to ms
       const tsMs = s.timestamp > 1e12 ? s.timestamp : s.timestamp * 1000;
-      if (s.conditionId && tsMs >= cutoff) {
-        ids.add(s.conditionId);
+      const title = (s.title ?? s.question ?? "").toLowerCase().trim();
+      if (title && tsMs >= cutoff) {
+        titles.add(title);
       }
     }
   } catch {}
-  return ids;
+  return titles;
 }
 
 // ─── FETCH (paginated) ─────────────────────────────────────
@@ -130,9 +131,9 @@ async function runScan(): Promise<ScoredMarket[]> {
   const raw = await fetchMarkets();
   console.log(`  Fetched: ${raw.length} markets (paginated)`);
 
-  // Load whale activity for score boosting
-  const whaleIds = loadWhaleConditionIds();
-  console.log(`  Whale-active markets (24h): ${whaleIds.size}`);
+  // Load whale activity for score boosting (matched by title)
+  const whaleTitles = loadWhaleTitles();
+  console.log(`  Whale-active titles (24h): ${whaleTitles.size}`);
 
   // 2. Filter
   const now = Date.now();
@@ -151,7 +152,7 @@ async function runScan(): Promise<ScoredMarket[]> {
   // 3. Score + shape output (whale-active markets get +0.30 bonus)
   const scored: ScoredMarket[] = filtered.map((m) => {
     const base  = scoreMarket(m);
-    const bonus = whaleIds.has(m.conditionId) ? WHALE_SCORE_BONUS : 0;
+    const bonus = whaleTitles.has(m.question.toLowerCase().trim()) ? WHALE_SCORE_BONUS : 0;
     return {
       id: m.id,
       conditionId: m.conditionId,
@@ -181,7 +182,7 @@ async function runScan(): Promise<ScoredMarket[]> {
     const q = r.question.slice(0, 44).padEnd(44);
     const vol = `$${(r.volume24hr / 1000).toFixed(1)}k`.padStart(8);
     const liq = `$${(r.liquidityNum / 1000).toFixed(1)}k`.padStart(9);
-    const whale = whaleIds.has(r.conditionId) ? " 🐳" : "";
+    const whale = whaleTitles.has(r.question.toLowerCase().trim()) ? " 🐳" : "";
     console.log(`  ${String(i + 1).padEnd(3)} ${q} ${vol} ${liq} ${r.score.toFixed(3).padStart(6)}${whale}`);
   }
   console.log(`${"═".repeat(80)}`);

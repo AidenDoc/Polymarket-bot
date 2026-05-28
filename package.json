@@ -12,7 +12,11 @@
     "dashboard": "ts-node src/dashboard.ts",
     "bot": "ts-node src/bot.ts",
     "build": "tsc",
-    "start": "node dist/scanner.js"
+    "start": "node dist/scanner.js",
+    "start:bot": "node dist/bot.js",
+    "start:dashboard": "node dist/dashboard.js",
+    "start:guardian": "node dist/guardian.js",
+    "start:telegram": "node dist/telegram.js"
   },
   "dependencies": {
     "axios": "^1.7.2",

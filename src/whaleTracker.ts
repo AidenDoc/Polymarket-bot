@@ -5,6 +5,7 @@
  * ====================================================
  */
 
+import * as fs from "fs";
 import axios from "axios";
 
 // ─── WHALE WALLETS ─────────────────────────────────────────
@@ -104,6 +105,10 @@ export async function getWhaleSignals(): Promise<WhaleSignal[]> {
 
   // Most recent first
   signals.sort((a, b) => b.timestamp - a.timestamp);
+
+  // Persist so scanner/predictor can load whale context without re-fetching
+  fs.writeFileSync("whale_signals.json", JSON.stringify(signals, null, 2));
+
   return signals;
 }
 

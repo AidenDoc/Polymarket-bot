@@ -89,7 +89,9 @@ function loadWhaleConditionIds(): Set<string> {
     const signals: any[] = Array.isArray(raw) ? raw : (raw.signals ?? []);
     const cutoff = Date.now() - WHALE_LOOKBACK_MS;
     for (const s of signals) {
-      if (s.conditionId && new Date(s.timestamp).getTime() >= cutoff) {
+      // timestamp may be unix seconds or milliseconds — normalise to ms
+      const tsMs = s.timestamp > 1e12 ? s.timestamp : s.timestamp * 1000;
+      if (s.conditionId && tsMs >= cutoff) {
         ids.add(s.conditionId);
       }
     }
@@ -97,16 +99,24 @@ function loadWhaleConditionIds(): Set<string> {
   return ids;
 }
 
-// ─── FETCH ─────────────────────────────────────────────────
-async function fetchMarkets(limit = 500): Promise<RawMarket[]> {
-  const resp = await axios.get<RawMarket[]>(GAMMA_URL, {
-    params: { active: true, closed: false, limit },
-    timeout: 15_000,
-  });
-  if (!Array.isArray(resp.data)) {
-    throw new Error(`Unexpected response shape: ${JSON.stringify(resp.data).slice(0, 200)}`);
+// ─── FETCH (paginated) ─────────────────────────────────────
+async function fetchMarkets(total = 500): Promise<RawMarket[]> {
+  const PAGE_SIZE = 100;
+  const all: RawMarket[] = [];
+
+  for (let offset = 0; offset < total; offset += PAGE_SIZE) {
+    const resp = await axios.get<RawMarket[]>(GAMMA_URL, {
+      params: { active: true, closed: false, limit: PAGE_SIZE, offset },
+      timeout: 15_000,
+    });
+    if (!Array.isArray(resp.data)) {
+      throw new Error(`Unexpected response at offset ${offset}: ${JSON.stringify(resp.data).slice(0, 200)}`);
+    }
+    all.push(...resp.data);
+    if (resp.data.length < PAGE_SIZE) break; // reached last page
   }
-  return resp.data;
+
+  return all;
 }
 
 // ─── MAIN SCAN ─────────────────────────────────────────────
@@ -117,8 +127,8 @@ async function runScan(): Promise<ScoredMarket[]> {
   console.log(`${"═".repeat(60)}`);
 
   // 1. Fetch
-  const raw = await fetchMarkets(500);
-  console.log(`  Fetched: ${raw.length} markets`);
+  const raw = await fetchMarkets();
+  console.log(`  Fetched: ${raw.length} markets (paginated)`);
 
   // Load whale activity for score boosting
   const whaleIds = loadWhaleConditionIds();

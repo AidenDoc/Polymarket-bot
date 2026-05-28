@@ -50,6 +50,7 @@ interface NewsItem {
 interface ResearchBrief {
   conditionId: string;
   question: string;
+  clobTokenIds: string[];
   marketPrice: number;
   daysToExpiry: number;
   volume24hr: number;
@@ -392,6 +393,7 @@ async function researchMarket(market: ScanResult): Promise<ResearchBrief> {
   return {
     conditionId: market.conditionId,
     question: market.question,
+    clobTokenIds: market.clobTokenIds,
     marketPrice: yesPrice,
     daysToExpiry: parseFloat(daysToExpiry.toFixed(1)),
     volume24hr: market.volume24hr,

@@ -32,6 +32,7 @@ const MODEL_WEIGHTS = {
 interface ResearchBrief {
   conditionId: string;
   question: string;
+  clobTokenIds: string[];
   marketPrice: number;
   daysToExpiry: number;
   volume24hr: number;
@@ -65,6 +66,7 @@ interface WhaleContext {
 interface TradeSignal {
   conditionId: string;
   question: string;
+  clobTokenIds: string[];
   marketPrice: number;
   marketImpliedProb: number;
   ensembleProbability: number;
@@ -406,6 +408,7 @@ function generateSignal(brief: ResearchBrief, estimates: ModelEstimate[], whale:
   return {
     conditionId: brief.conditionId,
     question: brief.question,
+    clobTokenIds: brief.clobTokenIds,
     marketPrice: brief.marketPrice,
     marketImpliedProb: marketProb,
     ensembleProbability: ensembleProb,

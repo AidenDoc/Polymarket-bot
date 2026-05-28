@@ -10,9 +10,9 @@ import axios from "axios";
 
 // ─── CONFIG ────────────────────────────────────────────────
 const GAMMA_URL = "https://gamma-api.polymarket.com/markets";
-const MIN_LIQUIDITY = 1_000;
-const MIN_VOLUME_24H = 50;
-const MAX_DAYS_TO_EXPIRY = 30;
+const MIN_LIQUIDITY = 500;
+const MIN_VOLUME_24H = 10;
+const MAX_DAYS_TO_EXPIRY = 60;
 const TOP_N = 20;
 
 const NOISE_KEYWORDS = [

@@ -107,7 +107,7 @@ async function fetchMarkets(total = 500): Promise<RawMarket[]> {
 
   for (let offset = 0; offset < total; offset += PAGE_SIZE) {
     const resp = await axios.get<RawMarket[]>(GAMMA_URL, {
-      params: { active: true, closed: false, limit: PAGE_SIZE, offset },
+      params: { active: true, closed: false, limit: PAGE_SIZE, offset, order: "volume24hr", ascending: false },
       timeout: 15_000,
     });
     if (!Array.isArray(resp.data)) {

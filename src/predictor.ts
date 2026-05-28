@@ -589,8 +589,8 @@ async function main(): Promise<void> {
     signals,
   };
 
-  fs.writeFileSync("signal_results.json", JSON.stringify(output, null, 2));
-  console.log("  ✓ Signals saved to signal_results.json");
+  fs.writeFileSync("predictor_results.json", JSON.stringify(output, null, 2));
+  console.log("  ✓ Signals saved to predictor_results.json");
   console.log("  → Ready for Step 4: Trade Executor\n");
 }
 

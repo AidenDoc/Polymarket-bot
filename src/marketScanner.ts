@@ -23,6 +23,15 @@ const NOISE_KEYWORDS = [
   "how many", "number of",
 ];
 
+const SPORTS_PATTERNS = [
+  /\b(ATP|WTA|Roland Garros|French Open|Wimbledon|US Open|Australian Open)\b/i,
+  /\b(NBA|NFL|NHL|MLB|WNBA|MLS|UFC|PGA|La ?Liga|Premier League|Champions League|Bundesliga|Serie A|Ligue ?1)\b/i,
+  /\b(Super Bowl|World Series|Stanley Cup|Grand Prix|Formula ?1|\bF1\b)\b/i,
+];
+
+const MIN_PRICE = 0.05;
+const MAX_PRICE = 0.95;
+
 // ─── TYPES ─────────────────────────────────────────────────
 interface RawMarket {
   id: string;
@@ -60,6 +69,10 @@ function daysUntil(isoDate: string): number {
 function isNoise(question: string): boolean {
   const lower = question.toLowerCase();
   return NOISE_KEYWORDS.some((kw) => lower.includes(kw));
+}
+
+function isSports(question: string): boolean {
+  return SPORTS_PATTERNS.some((re) => re.test(question));
 }
 
 function parseJsonArray(raw: string): string[] {
@@ -145,6 +158,9 @@ async function runScan(): Promise<ScoredMarket[]> {
     const days = daysUntil(m.endDateIso);
     if (days < 0 || days > MAX_DAYS_TO_EXPIRY)       return false;
     if (isNoise(m.question))                         return false;
+    if (isSports(m.question))                        return false;
+    const prices = parseJsonArray(m.outcomePrices).map(Number);
+    if (prices.length > 0 && (prices[0] < MIN_PRICE || prices[0] > MAX_PRICE)) return false;
     return true;
   });
   console.log(`  After filters: ${filtered.length} markets`);

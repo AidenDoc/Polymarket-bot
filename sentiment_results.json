@@ -1,116 +1,116 @@
 {
-  "timestamp": "2026-05-25T19:23:44.865Z",
+  "timestamp": "2026-05-27T15:23:05.488Z",
   "marketsAnalyzed": 10,
   "results": [
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S202636EDF8391B6-F91E46BE8F0",
-      "title": "yes Tampa Bay,yes New York Y,yes Arizona,yes San Diego,yes L",
+      "conditionId": "0xcccb7e7613a087c132b69cbf3a02bece3fdcb824c1da54ae79acc8d4a562d902",
+      "question": "GTA VI released before June 2026?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:36.148Z"
+      "timestamp": "2026-05-27T15:22:54.212Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026D5C28B5CF8D-B819433C8E5",
-      "title": "yes Pittsburgh wins by over 1.5 runs,yes Tampa Bay wins by o",
+      "conditionId": "0x7976b8dbacf9077eb1453a62bcefd6ab2df199acd28aad276ff0d920d6992892",
+      "question": "Will Spain win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:37.172Z"
+      "timestamp": "2026-05-27T15:22:55.389Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20263E5961C4C89-A415DE9DAD7",
-      "title": "yes Target Price: $77,499.25,yes Target Price: $0.1029319,ye",
+      "conditionId": "0x375409bc5eeeff961e82b479caeccc20f33d15738e5bce1186d628aa3d9dfb1f",
+      "question": "Will England win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:38.176Z"
+      "timestamp": "2026-05-27T15:22:56.552Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20269739F049E5F-E9D5B2985B5",
-      "title": "yes Chicago C,yes Tampa Bay,yes Chicago WS,yes Milwaukee,yes",
+      "conditionId": "0x9b6fef249040fd17e9c107955b37ac2c3e923509b6b0ff01cc463a331ddeb894",
+      "question": "Will France win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:39.257Z"
+      "timestamp": "2026-05-27T15:22:57.814Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026ADF5FDB89F0-D15BA00B78A",
-      "title": "yes Alex Bregman: 1+,yes Oneil Cruz: 1+,yes Junior Caminero:",
+      "conditionId": "0x30d55d8124ee1e12dabe89201badc45669b81dff69e4ce44d961f32878ec178a",
+      "question": "Will Brazil win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:40.017Z"
+      "timestamp": "2026-05-27T15:22:58.835Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026B3D10611132-8FC8B412F14",
-      "title": "yes Pittsburgh,yes Tampa Bay,yes New York Y,yes New York M,y",
+      "conditionId": "0x0c4cd2055d6ea89354ffddc55d6dbcef9355748112ea952fc925f3db6a5c457f",
+      "question": "Will Argentina win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:40.882Z"
+      "timestamp": "2026-05-27T15:23:00.063Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20264E6BE0CB7CC-4EDADA0505F",
-      "title": "yes Chicago C,yes Tampa Bay,yes San Francisco,yes Cleveland,",
+      "conditionId": "0x1595b4818eeb1ea1e0bec5de6f057218e557feee9b405a0e930d290384fa1d16",
+      "question": "Will Germany win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:41.734Z"
+      "timestamp": "2026-05-27T15:23:01.291Z"
     },
     {
-      "ticker": "KXMVECROSSCATEGORY-S2026AA00C810D96-EF076320861",
-      "title": "yes Chicago C,yes Chicago WS,yes New York M,yes Texas,yes Cl",
+      "conditionId": "0x4f3421fb2daf5cca7430ed8d8132463963081572d75434393a1808fdb8829fe8",
+      "question": "Will Portugal win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:42.612Z"
+      "timestamp": "2026-05-27T15:23:02.326Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026E438CEE3BBF-941706CE736",
-      "title": "yes Pittsburgh,yes Tampa Bay,yes Chicago WS,yes Milwaukee,ye",
+      "conditionId": "0x9be56371f6a29d12769b2f196847ee825b9585ebb8bfa042136be031b081eba1",
+      "question": "Will Netherlands win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:43.481Z"
+      "timestamp": "2026-05-27T15:23:03.851Z"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026D6484BDC85D-7A6F78F3C11",
-      "title": "yes Minnesota,yes New York Y,yes Cleveland,yes Miami,yes Jac",
+      "conditionId": "0xcdb1f0400949238a63d3e88243d2ada08cd9c2a71985ced9f0cfd5e66354cf90",
+      "question": "Will USA win the 2026 FIFA World Cup?",
       "newsItems": [],
       "sentimentScore": 0,
       "keyTopics": [],
       "bullishSignals": [],
       "bearishSignals": [],
       "confidence": 0.2,
-      "timestamp": "2026-05-25T19:23:44.363Z"
+      "timestamp": "2026-05-27T15:23:04.981Z"
     }
   ]
 }

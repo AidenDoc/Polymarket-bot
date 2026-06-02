@@ -103,22 +103,29 @@ async function sendTelegram(text: string): Promise<void> {
 async function getMarketStatus(conditionId: string): Promise<MarketStatus | null> {
   try {
     const res = await axios.get(`${GAMMA_API}/markets`, {
-      params: { conditionId },
+      params: { condition_ids: conditionId },  // snake_case plural — Gamma ignores unknown params
       timeout: 10000,
     });
 
-    const markets: any[] = Array.isArray(res.data) ? res.data : [res.data];
+    const markets: any[] = Array.isArray(res.data) ? res.data : (res.data?.markets ?? [res.data]);
     const market = markets.find((m: any) => m.conditionId === conditionId) ?? markets[0];
 
     if (!market) return null;
 
-    const outcomePrices: string[] = market.outcomePrices ?? ["0.5", "0.5"];
-    const p0 = parseFloat(outcomePrices[0] ?? "0.5");  // YES price
-    const p1 = parseFloat(outcomePrices[1] ?? "0.5");  // NO price
+    // outcomePrices comes back as a stringified JSON array from Gamma — must parse
+    let prices: number[] = [0.5, 0.5];
+    try {
+      const raw = typeof market.outcomePrices === "string"
+        ? JSON.parse(market.outcomePrices)
+        : market.outcomePrices;
+      if (Array.isArray(raw)) prices = raw.map((p: string) => parseFloat(p));
+    } catch {}
+    const p0 = prices[0] ?? 0.5;  // YES price
+    const p1 = prices[1] ?? 0.5;  // NO price
 
-    // Resolved when one token has settled to 1.0 and the other to 0.0
+    // Gamma signals resolution via closed=true or prices pinned to rails (no resolved field)
     const resolved: boolean =
-      market.resolved === true ||
+      market.closed === true ||
       (p0 >= 0.99 && p1 <= 0.01) ||
       (p0 <= 0.01 && p1 >= 0.99);
 
@@ -132,7 +139,7 @@ async function getMarketStatus(conditionId: string): Promise<MarketStatus | null
       currentPrice: p0,
     };
   } catch (e: any) {
-    log(`Gamma API error for ${conditionId.slice(0, 12)}...: ${e.message}`, "WARN");
+    log(`Gamma error for ${conditionId.slice(0, 12)}...: ${e.message}`, "WARN");
     return null;
   }
 }

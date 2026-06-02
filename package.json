@@ -1,5 +1,5 @@
 {
-  "name": "kalshi-bot",
+  "name": "polymarket-bot",
   "version": "1.0.0",
   "description": "AI-powered prediction market trading bot",
   "main": "dist/scanner.js",

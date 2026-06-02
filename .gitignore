@@ -13,3 +13,8 @@ trade_log.json
 performance_metrics.json
 portfolio.json
 knowledge_base.json
+guardian_log.json
+sentiment_results.json
+open_positions.json
+trade_history.json
+predictor_results.json

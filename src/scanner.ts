@@ -22,7 +22,7 @@ const BASE_URL = ENV === "demo"
   : "https://api.elections.kalshi.com/trade-api/v2";
 
 const MIN_VOLUME = 100;           // raised: junk markets have tiny volume
-const MAX_DAYS_TO_EXPIRY = 30;
+const MAX_DAYS_TO_EXPIRY = 4;
 const MIN_OPEN_INTEREST = 50;    // raised: need real liquidity
 const MAX_MARKETS_TO_RESEARCH = 10;
 const PRICE_SPIKE_THRESHOLD = 0.1;

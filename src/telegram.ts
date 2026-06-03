@@ -20,7 +20,7 @@ const POLL_INTERVAL_MS        = 2_000;
 const CREDIT_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1_000; // 6 hours
 const CREDIT_ALERT_THRESHOLD  = 2.00;                  // alert below $2
 const KILL_SWITCH_FILE        = "STOP";
-const DASHBOARD_URL           = "http://159.223.189.172:3000";
+const DASHBOARD_URL           = process.env.DASHBOARD_URL ?? "http://localhost:3000";
 
 const PM2_PROCESSES = ["kalshi-bot", "kalshi-dashboard", "kalshi-guardian", "kalshi-telegram"];
 

@@ -383,27 +383,42 @@ function generateSignal(brief: ResearchBrief, estimates: ModelEstimate[], whale:
   const ev = computeExpectedValue(ensembleProb, brief.marketPrice);
   const mispricingScore = computeMispricingScore(ensembleProb, marketProb, estimates);
 
-  // Whale confidence adjustment
   const ensembleDirection = edge > 0 ? "BUY" : "SELL";
-  const whaleAgrees = whale.netBias !== "NONE" && whale.netBias !== "MIXED" && whale.netBias === ensembleDirection;
-  const whaleContra = whale.netBias !== "NONE" && whale.netBias !== "MIXED" && whale.netBias !== ensembleDirection;
-  const confidence = Math.min(1, baseConfidence + (whaleAgrees ? 0.05 : 0));
+  const hasWhale   = whale.netBias === "BUY" || whale.netBias === "SELL";
+  const whaleAgrees = hasWhale && whale.netBias === ensembleDirection;
+  const whaleContra = hasWhale && whale.netBias !== ensembleDirection;
+
+  // How hard does the model object? Only a *strong* opposing edge vetoes the whale.
+  const MODEL_VETO_EDGE = 0.10; // model must disagree by >10% to overrule the whale
+  const modelStronglyAgainst = whaleContra && Math.abs(edge) >= MODEL_VETO_EDGE;
 
   let action: "BUY_YES" | "BUY_NO" | "PASS" = "PASS";
-  if (Math.abs(edge) >= MIN_EDGE && confidence >= MIN_CONFIDENCE) {
+  let trigger: "WHALE" | "MODEL" | "NONE" = "NONE";
+
+  if (hasWhale && !modelStronglyAgainst) {
+    // WHALE-LED: follow the money. netBias BUY => they bought YES; SELL => they bought NO.
+    action = whale.netBias === "BUY" ? "BUY_YES" : "BUY_NO";
+    trigger = "WHALE";
+  } else if (!hasWhale && Math.abs(edge) >= MIN_EDGE && baseConfidence >= MIN_CONFIDENCE) {
+    // MODEL-LED fallback when no whale is present.
     action = edge > 0 ? "BUY_YES" : "BUY_NO";
+    trigger = "MODEL";
   }
 
-  const whaleBacked = action !== "PASS" && whaleAgrees;
+  // Confidence: whale-led trades get a floor so sizing isn't starved by a lukewarm model.
+  let confidence = baseConfidence;
+  if (trigger === "WHALE") confidence = Math.max(baseConfidence, 0.6);
+
+  const whaleBacked = trigger === "WHALE";
   const positionSize = action !== "PASS"
-    ? suggestPositionSize(Math.abs(edge), confidence, brief.volume24hr, whaleBacked)
+    ? suggestPositionSize(Math.max(Math.abs(edge), 0.02), confidence, brief.volume24hr, whaleBacked)
     : 0;
 
   const allRiskFlags = [...brief.riskFlags];
   if (brief.daysToExpiry < 1) allRiskFlags.push("EXPIRES_SOON");
   if (brief.volume24hr < 500) allRiskFlags.push("LOW_LIQUIDITY");
-  if (confidence < 0.5) allRiskFlags.push("LOW_MODEL_AGREEMENT");
-  if (whaleContra) allRiskFlags.push("WHALE_CONTRA_SIGNAL");
+  if (trigger === "WHALE" && whaleContra) allRiskFlags.push("MODEL_DISAGREES_FOLLOWING_WHALE");
+  if (modelStronglyAgainst) allRiskFlags.push("WHALE_VETOED_BY_MODEL");
 
   return {
     conditionId: brief.conditionId,
@@ -419,7 +434,8 @@ function generateSignal(brief: ResearchBrief, estimates: ModelEstimate[], whale:
     action,
     confidence,
     suggestedPositionSize: positionSize,
-    reasoning: estimates.map((e) => e.model.toUpperCase() + ": " + e.reasoning).join(" | "),
+    reasoning: (trigger === "WHALE" ? "[WHALE-LED] " : trigger === "MODEL" ? "[MODEL-LED] " : "")
+      + estimates.map((e) => e.model.toUpperCase() + ": " + e.reasoning).join(" | "),
     riskFlags: allRiskFlags,
     whaleContext: whale,
     timestamp: new Date().toISOString(),

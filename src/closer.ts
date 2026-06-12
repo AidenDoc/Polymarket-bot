@@ -112,7 +112,7 @@ async function main() {
   if (!open.length) { console.log("  No open positions.\n"); return; }
   console.log(`  Checking ${open.length} position(s)...\n`);
 
-  const history = loadJson<ClosedRecord[]>(TRADE_HISTORY_FILE, []).filter((r: any) => r.closedAt) as ClosedRecord[];
+  const allHistory = loadJson<any[]>(TRADE_HISTORY_FILE, []);
   const stillOpen: OpenPosition[] = [];
   let closed = 0;
 
@@ -124,7 +124,7 @@ async function main() {
     if (!s.resolved) { console.log(`  · ${p.action} ${label}\n    still open — ${s.basis}`); stillOpen.push(p); continue; }
 
     const { pnl, exitPrice, outcome } = calcPnl(p, s.yesWon, s.noWon);
-    history.push({ ...p, closedAt: new Date().toISOString(), exitPrice, pnl, outcome });
+    allHistory.push({ ...p, closedAt: new Date().toISOString(), exitPrice, pnl, outcome });
     closed++;
     const mark = outcome === "WIN" ? "✓" : outcome === "LOSS" ? "✗" : "–";
     console.log(`  ${mark} ${p.action} ${label}\n    ${outcome} | P&L ${pnl >= 0 ? "+" : ""}$${pnl.toFixed(2)} | ${s.basis}`);
@@ -132,10 +132,12 @@ async function main() {
   }
 
   saveJson(OPEN_POSITIONS_FILE, stillOpen);
-  saveJson(TRADE_HISTORY_FILE, history);
+  saveJson(TRADE_HISTORY_FILE, allHistory);
+
+  const history = allHistory.filter((r: any) => r.closedAt) as ClosedRecord[];
   if (closed) writeMetrics(history, stillOpen);
 
-  const totalPnl = history.reduce((a, r) => a + r.pnl, 0);
+  const totalPnl = history.reduce((a, r) => a + (r.pnl ?? 0), 0);
   const wins = history.filter(r => r.outcome === "WIN").length;
   const losses = history.filter(r => r.outcome === "LOSS").length;
   console.log("\n" + "=".repeat(64));

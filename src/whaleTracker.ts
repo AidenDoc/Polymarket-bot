@@ -52,6 +52,7 @@ export interface WhaleSignal {
   conditionId: string;
   title: string;
   outcome: string;
+  side: string;
   price: number;
   usdcSize: number;
   timestamp: number;
@@ -83,16 +84,20 @@ export async function getWhaleSignals(): Promise<WhaleSignal[]> {
       const activity = await fetchWalletActivity(address);
 
       for (const tx of activity) {
+        if (tx.type !== "TRADE") continue;            // drop MAKER_REBATE / REWARD / YIELD junk
         if (tx.side?.toUpperCase() !== "BUY") continue;
+        if (!tx.conditionId) continue;                // need a real market
+        if (!tx.outcome) continue;                    // need Yes/No for direction
+        if (!(tx.price > 0)) continue;                // sanity
         if (!isRecent(tx.timestamp)) continue;
         if (isSports(tx.title ?? "")) continue;
         if ((tx.usdcSize ?? 0) < MIN_USDC_SIZE) continue;
-
         signals.push({
           walletAddress: address,
           conditionId: tx.conditionId,
           title: tx.title,
           outcome: tx.outcome,
+          side: tx.side,                              // carry direction through
           price: tx.price,
           usdcSize: tx.usdcSize,
           timestamp: tx.timestamp,

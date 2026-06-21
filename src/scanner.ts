@@ -10,6 +10,7 @@ import * as path from "path";
 import * as crypto from "crypto";
 import axios, { AxiosInstance } from "axios";
 import * as dotenv from "dotenv";
+import { shouldBlockMarket } from "./marketFilters";
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ interface KalshiMarket {
   no_ask_dollars?: string;
   close_time?: string;
   expiration_time?: string;
+  [k: string]: unknown; // tolerate extra Kalshi fields; lets shouldBlockMarket accept this
 }
 
 interface OrderBook {
@@ -235,8 +237,22 @@ async function runScan(client: KalshiClient): Promise<ScanResult[]> {
   } while (cursor && allMarkets.length < 5000);
 
   // 2. Filter tradeable (with hard blocks applied inside isTradeable)
-  const blocked = allMarkets.filter(m => isBlocked(m.ticker));
-  const tradeable = allMarkets.filter((m) => isTradeable(m).ok);
+  // Sports/vs/draw/spread hard-blocked by title. Preferred econ/politics series
+  // are exempt, so legit titles like "Trump vs ..." or "... beat ..." aren't
+  // caught by the sports verbs.
+  const isPreferred = (m: KalshiMarket) =>
+    PREFERRED_SERIES.some(s => m.ticker.toUpperCase().includes(s));
+
+  const blocked = allMarkets.filter(m =>
+    isBlocked(m.ticker) || (!isPreferred(m) && shouldBlockMarket(m).blocked));
+
+  const tradeable = allMarkets.filter((m) => {
+    if (!isPreferred(m)) {
+      const hard = shouldBlockMarket(m);
+      if (hard.blocked) { console.log(`  [scanner] skip ${m.ticker}: ${hard.reason}`); return false; }
+    }
+    return isTradeable(m).ok;
+  });
   console.log(`\n  Total: ${allMarkets.length} | Blocked (junk): ${blocked.length} | Tradeable: ${tradeable.length}`);
 
   // 3. Enrich with orderbook + score

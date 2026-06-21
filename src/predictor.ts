@@ -9,6 +9,7 @@ import * as fs from "fs";
 import * as https from "https";
 import * as dotenv from "dotenv";
 import type { WhaleSignal } from "./whaleTracker";
+import { guardTrade } from "./tradeGuards";
 
 dotenv.config();
 
@@ -399,10 +400,23 @@ function generateSignal(brief: ResearchBrief, estimates: ModelEstimate[], whale:
     // WHALE-LED: follow the money. netBias BUY => they bought YES; SELL => they bought NO.
     action = whale.netBias === "BUY" ? "BUY_YES" : "BUY_NO";
     trigger = "WHALE";
-  } else if (!hasWhale && Math.abs(edge) >= MIN_EDGE && baseConfidence >= MIN_CONFIDENCE) {
-    // MODEL-LED fallback when no whale is present.
-    action = edge > 0 ? "BUY_YES" : "BUY_NO";
-    trigger = "MODEL";
+  } else if (!hasWhale) {
+    // MODEL-LED fallback, now gated by guardTrade: blocks fading favorites,
+    // chasing longshots, and edges too large to be real. MIN_EDGE/MIN_CONFIDENCE
+    // are enforced inside guardTrade with the same defaults.
+    const side: "YES" | "NO" = edge > 0 ? "YES" : "NO";
+    const g = guardTrade({
+      side,
+      yesPrice: brief.marketPrice,
+      modelProb: ensembleProb / 100,
+      confidence: baseConfidence,
+    });
+    if (g.action !== "PASS") {
+      action = g.action;
+      trigger = "MODEL";
+    } else {
+      console.log(`    [guard] PASS ${brief.question.slice(0, 40)}: ${g.reason}`);
+    }
   }
 
   // Confidence: whale-led trades get a floor so sizing isn't starved by a lukewarm model.

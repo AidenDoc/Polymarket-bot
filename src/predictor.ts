@@ -389,18 +389,20 @@ function generateSignal(brief: ResearchBrief, estimates: ModelEstimate[], whale:
   const whaleAgrees = hasWhale && whale.netBias === ensembleDirection;
   const whaleContra = hasWhale && whale.netBias !== ensembleDirection;
 
-  // How hard does the model object? Only a *strong* opposing edge vetoes the whale.
-  const MODEL_VETO_EDGE = 0.10; // model must disagree by >10% to overrule the whale
+  // Whales are followed UNCONDITIONALLY: the model never vetoes a whale signal.
+  // We still measure how hard the model disagrees, purely to surface it as a risk flag.
+  const MODEL_VETO_EDGE = 0.10; // informational only — no longer overrules the whale
   const modelStronglyAgainst = whaleContra && Math.abs(edge) >= MODEL_VETO_EDGE;
 
   let action: "BUY_YES" | "BUY_NO" | "PASS" = "PASS";
   let trigger: "WHALE" | "MODEL" | "NONE" = "NONE";
 
-  if (hasWhale && !modelStronglyAgainst) {
-    // WHALE-LED: follow the money. netBias BUY => they bought YES; SELL => they bought NO.
+  if (hasWhale) {
+    // WHALE-LED: follow the money unconditionally, no matter how hard the model objects.
+    // netBias BUY => they bought YES; SELL => they bought NO.
     action = whale.netBias === "BUY" ? "BUY_YES" : "BUY_NO";
     trigger = "WHALE";
-  } else if (!hasWhale) {
+  } else {
     // MODEL-LED fallback, now gated by guardTrade: blocks fading favorites,
     // chasing longshots, and edges too large to be real. MIN_EDGE/MIN_CONFIDENCE
     // are enforced inside guardTrade with the same defaults.
@@ -432,7 +434,7 @@ function generateSignal(brief: ResearchBrief, estimates: ModelEstimate[], whale:
   if (brief.daysToExpiry < 1) allRiskFlags.push("EXPIRES_SOON");
   if (brief.volume24hr < 500) allRiskFlags.push("LOW_LIQUIDITY");
   if (trigger === "WHALE" && whaleContra) allRiskFlags.push("MODEL_DISAGREES_FOLLOWING_WHALE");
-  if (modelStronglyAgainst) allRiskFlags.push("WHALE_VETOED_BY_MODEL");
+  if (modelStronglyAgainst) allRiskFlags.push("STRONG_MODEL_DISAGREEMENT_OVERRIDDEN");
 
   return {
     conditionId: brief.conditionId,

@@ -27,6 +27,16 @@ const SPORTS_PATTERNS = [
   /\b(ATP|WTA|Roland Garros|French Open|Wimbledon|US Open|Australian Open)\b/i,
   /\b(NBA|NFL|NHL|MLB|WNBA|MLS|UFC|PGA|La ?Liga|Premier League|Champions League|Bundesliga|Serie A|Ligue ?1)\b/i,
   /\b(Super Bowl|World Series|Stanley Cup|Grand Prix|Formula ?1|\bF1\b)\b/i,
+  /\bwin on \d{4}-\d{2}-\d{2}\b/i,
+  /\bvs\.?\b.*\b(O\/U|draw|tie|spread|score|half|goal|match|game|win|advance|qualify)\b/i,
+  /\bend in a (draw|tie)\b/i,
+  /\bspread:\s/i,
+  /\bo\/u\b|\bover\/under\b/i,
+  /\bboth teams to score\b/i,
+  /\bexact score\b/i,
+  /\b1st half\b|\b2nd half\b|\bhalftime\b/i,
+  /\(\s*[+-]\d+(\.\d+)?\s*\)/,
+  /\bmoneyline\b|\bhandicap\b|\bparlay\b/i,
 ];
 
 const MIN_PRICE = 0.05;
